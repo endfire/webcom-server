@@ -1,2 +1,1 @@
-# webcom-server
-Webcom Koa backend.
+# Webcom's backend.
