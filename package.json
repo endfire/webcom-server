@@ -11,7 +11,7 @@
     "build": "rimraf build && mkdirp build && babel src --out-dir build --source-maps inline",
     "build:watch": "npm run build -- --watch",
     "cover": "nyc npm test && nyc report --reporter=html && open -a \"Google Chrome\" coverage/index.html",
-    "foreman:dev": "foreman start -f Procfile.dev",
+    "heroku:dev": "heroku local -f Procfile.dev",
     "start": "npm run build && node build",
     "start:dev": "nodemon build",
     "test": "npm run test:lint && npm run test:src",
