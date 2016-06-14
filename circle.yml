@@ -5,3 +5,9 @@ machine:
 test:
   post:
     - bash <(curl -s https://codecov.io/bash)
+
+deployment:
+  production:
+    branch: master
+    heroku:
+      appname: webcom-server
