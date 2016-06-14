@@ -31,7 +31,11 @@
  * @return {Object}
  */
 export default (schema, data) => {
-  const fields = Object.keys(schema);
+  const { keys } = Object;
+  const attributes = keys(schema.attributes);
+  const relationships = keys(schema.relationships);
+  const fields = attributes.concat(relationships);
+
   let sanitized = {};
 
   for (const field of fields) {
