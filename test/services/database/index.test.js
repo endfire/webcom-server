@@ -13,7 +13,9 @@ test.before('connect', async t => {
 });
 
 test('create, read, update, delete', async t => {
-  const user = await db.create('user', {
+  let user;
+
+  user = await db.create('user', {
     name: 'Dylan',
     email: 'dylanslack@gmail.com',
   });
@@ -22,7 +24,29 @@ test('create, read, update, delete', async t => {
     id: user.id,
     name: 'Dylan',
     email: 'dylanslack@gmail.com',
+  }, 'created user has correct json');
+
+  user = await db.fetch('user', user.id);
+
+  t.deepEqual(user, {
+    id: user.id,
+    name: 'Dylan',
+    email: 'dylanslack@gmail.com',
+  }, 'fetched user has correct json');
+
+  user = await db.update('user', user.id, {
+    name: 'Dy-lon',
   });
+
+  t.deepEqual(user, {
+    id: user.id,
+    name: 'Dy-lon',
+    email: 'dylanslack@gmail.com',
+  }, 'updated user has correct json');
+
+  user = await db.delete('user', user.id);
+
+  t.is(user, true, 'user was successfully deleted');
 });
 
 test.after('teardown', async () => {

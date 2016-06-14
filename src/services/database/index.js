@@ -41,8 +41,8 @@ export default class Database {
   }
 
   update(type, id, data) {
-    const { conn } = this;
-    const table = r.table(type);
+    const { conn, schemas } = this;
+    const table = r.table(normalizeTableName(schemas, type));
 
     const fetch = () => table.get(id).run(conn);
 
@@ -58,8 +58,8 @@ export default class Database {
   }
 
   delete(type, id) {
-    const { conn } = this;
-    const table = r.table(type);
+    const { conn, schemas } = this;
+    const table = r.table(normalizeTableName(schemas, type));
 
     const didSucceed = ({ deleted }) => deleted === 1;
 
@@ -75,8 +75,8 @@ export default class Database {
   }
 
   find(type, filter) {
-    const { conn } = this;
-    const table = r.table(type);
+    const { conn, schemas } = this;
+    const table = r.table(normalizeTableName(schemas, type));
 
     return new Promise((resolve, reject) => {
       table
@@ -88,8 +88,8 @@ export default class Database {
   }
 
   fetch(type, id) {
-    const { conn } = this;
-    const table = r.table(type);
+    const { conn, schemas } = this;
+    const table = r.table(normalizeTableName(schemas, type));
 
     return new Promise((resolve, reject) => {
       table

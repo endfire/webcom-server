@@ -10,7 +10,7 @@
   "scripts": {
     "build": "rimraf build && mkdirp build && babel src --out-dir build --source-maps inline",
     "build:watch": "npm run build -- --watch",
-    "cover": "nyc npm test && nyc report --reporter=html && open -a \"Google Chrome\" coverage/index.html",
+    "cover": "npm run test:src --reporter=html && open -a \"Google Chrome\" coverage/index.html",
     "heroku:dev": "heroku local -f Procfile.dev",
     "start": "npm run build && node build",
     "start:dev": "nodemon build",
