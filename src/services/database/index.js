@@ -1,5 +1,7 @@
 import r from 'rethinkdb';
 import normalizeTableName from './normalizeTableName';
+import sanitizeRequest from './sanitizeRequest';
+import getFieldsToMerge from './getFieldsToMerge';
 
 export default class Database {
   constructor(schemas = {}, { db = '', host = '' }) {
@@ -27,12 +29,17 @@ export default class Database {
     const { conn, schemas } = this;
     const table = r.table(normalizeTableName(schemas, type));
 
+    const sanitizedData = sanitizeRequest(schemas[type], data);
+    const fieldsToMerge = getFieldsToMerge(schemas, type);
     const fetch = ({ generated_keys: keys }) =>
-      table.get(keys[0]).run(conn);
+      table
+        .get(keys[0])
+        .merge(fieldsToMerge)
+        .run(conn);
 
     return new Promise((resolve, reject) => {
       table
-        .insert(data)
+        .insert(sanitizedData)
         .run(conn)
         .then(fetch)
         .then(resolve)
@@ -44,12 +51,14 @@ export default class Database {
     const { conn, schemas } = this;
     const table = r.table(normalizeTableName(schemas, type));
 
-    const fetch = () => table.get(id).run(conn);
+    const sanitizedData = sanitizeRequest(schemas[type], data);
+    const fieldsToMerge = getFieldsToMerge(schemas, type);
+    const fetch = () => table.get(id).merge(fieldsToMerge).run(conn);
 
     return new Promise((resolve, reject) => {
       table
         .get(id)
-        .update(data, { returnChanges: true })
+        .update(sanitizedData, { returnChanges: true })
         .run(conn)
         .then(fetch)
         .then(resolve)
@@ -77,10 +86,12 @@ export default class Database {
   find(type, filter) {
     const { conn, schemas } = this;
     const table = r.table(normalizeTableName(schemas, type));
+    const fieldsToMerge = getFieldsToMerge(schemas, type);
 
     return new Promise((resolve, reject) => {
       table
         .filter(filter)
+        .merge(fieldsToMerge)
         .run(conn)
         .then(resolve)
         .catch(reject);
@@ -90,10 +101,12 @@ export default class Database {
   fetch(type, id) {
     const { conn, schemas } = this;
     const table = r.table(normalizeTableName(schemas, type));
+    const fieldsToMerge = getFieldsToMerge(schemas, type);
 
     return new Promise((resolve, reject) => {
       table
         .get(id)
+        .merge(fieldsToMerge)
         .run(conn)
         .then(resolve)
         .catch(reject);
