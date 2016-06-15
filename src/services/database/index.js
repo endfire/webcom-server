@@ -113,36 +113,33 @@ export default class Database {
     });
   }
 
-  /*
-  fetchRelated('user', 1, 'pets')
-
-  r.table('animals').getAll(r.args(
-    r.table('users').get(1)('pets')
-  )).merge(function(animal) {
-    return {
-      owner: r.table('users').get(animal('owner'))
-    }
-  })
-
-   */
   fetchRelated(type, id, field) {
     const { conn, schemas } = this;
 
     const relationship = schemas[type].relationships[field];
-    const { hasMany, belongsTo } = relationship;
+    const { hasMany, belongsTo, embedded } = relationship;
     const parentTable = r.table(normalizeTableName(schemas, type));
     const relatedType = hasMany || belongsTo;
+
     const relatedTable = hasMany
       ? r.table(normalizeTableName(schemas, hasMany))
       : r.table(normalizeTableName(schemas, belongsTo));
 
-    const fetch = hasMany
-      ? relatedTable.getAll(r.args(parentTable.get(id)(field))).coerceTo('array')
-      : relatedTable.get(parentTable.get(id)(field));
+    let fetch;
+
+    if (embedded) {
+      fetch = parentTable.get(id)(field);
+    } else {
+      fetch = hasMany
+        ? relatedTable.getAll(r.args(parentTable.get(id)(field))).coerceTo('array')
+        : relatedTable.get(parentTable.get(id)(field));
+    }
+
+    const fieldsToMerge = getFieldsToMerge(schemas, relatedType);
 
     return new Promise((resolve, reject) => {
       fetch
-        .merge(getFieldsToMerge(schemas, relatedType))
+        .merge(fieldsToMerge)
         .run(conn)
         .then(resolve)
         .catch(reject);
