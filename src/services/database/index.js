@@ -29,7 +29,7 @@ export default class Database {
    * `data`.
    *
    * ```js
-   * db().create('user', {
+   * db.create('user', {
    *   name: 'Dylan',
    *   email: 'dylanslack@gmail.com',
    *   pets: [1, 2],
@@ -69,7 +69,7 @@ export default class Database {
    * Updates the record with id `id` in table `type` with data `data`.
    *
    * ```js
-   * db().update('user', 10, {
+   * db.update('user', 10, {
    *   name: 'Dy-lon',
    *   pets: [1, 2, 3],
    * }).then(user => {
@@ -105,7 +105,7 @@ export default class Database {
    * Deletes the record with id `id` from the table `type`.
    *
    * ```js
-   * db().delete('user', 10).then(success => {
+   * db.delete('user', 10).then(success => {
    *   // true or false
    * });
    * ```
@@ -134,7 +134,7 @@ export default class Database {
    * Finds all records from the table `type` that match `filter`.
    *
    * ```js
-   * db().find('user', {
+   * db.find('user', {
    *   name: 'Dylan',
    * }).then(user => {
    *   // found object
@@ -164,7 +164,7 @@ export default class Database {
    * Fetches a single record from table `table` with id `id`;
    *
    * ```js
-   * db().fetch('user', 10).then(user => {
+   * db.fetch('user', 10).then(user => {
    *   // fetched object
    * });
    * ```
@@ -192,11 +192,11 @@ export default class Database {
    * Fetches the `field` relationship from the record with id `id` from the table `type`;
    *
    * ```js
-   * db().fetchRelated('user', 10, 'pets').then(pets => {
+   * db.fetchRelated('user', 10, 'pets').then(pets => {
    *   // all the pets
    * });
    *
-   * db().fetchRelated('user', 10, 'company').then(company => {
+   * db.fetchRelated('user', 10, 'company').then(company => {
    *   // company
    * });
    * ```
