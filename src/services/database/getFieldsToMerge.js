@@ -67,20 +67,20 @@ export default (schemas, type) => record => {
     // don't merge embedded objects
     if (embedded) return {};
 
-    if (hasMany) {
-      const table = r.table(hasMany);
+    const table = r.table(hasMany || belongsTo);
+    const hasFields = record.hasFields(key);
 
-      return r.branch(record.hasFields(key), {
-        [key]: table.getAll(r.args(record(key))).coerceTo('array').orderBy('id'),
-      }, {});
-    } else if (belongsTo) {
-      const table = r.table(belongsTo);
-
-      return r.branch(record.hasFields(key), {
-        [key]: table.get(record(key)),
-      }, {});
-    }
-
-    return {};
+    // merge `hasMany` and `belongsTo` relationships
+    return hasMany
+      ? (
+          r.branch(hasFields, {
+            [key]: table.getAll(r.args(record(key))).coerceTo('array').orderBy('id'),
+          }, {})
+        )
+      : (
+          r.branch(hasFields, {
+            [key]: table.get(record(key)),
+          }, {})
+        );
   })));
 };
