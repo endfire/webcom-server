@@ -12,7 +12,7 @@ test.before('connect', async t => {
   t.truthy(db.conn, 'connection is present');
 });
 
-test('create, read, update, delete', async t => {
+test('create, read, update, delete with no relationships', async t => {
   let user;
 
   user = await db.create('user', {
@@ -47,6 +47,82 @@ test('create, read, update, delete', async t => {
   user = await db.delete('user', user.id);
 
   t.is(user, true, 'user was successfully deleted');
+});
+
+test('fetchRelated', async t => {
+  let expected;
+
+  await db.create('user', {
+    id: 10,
+    name: 'Dylan',
+    email: 'dylanslack@gmail.com',
+    pets: [11, 12],
+    company: 13,
+  });
+
+  await db.create('company', {
+    id: 13,
+    name: 'Apple',
+    employees: [10],
+  });
+
+  await db.create('animal', {
+    id: 11,
+    species: 'dog',
+    color: 'brown',
+    owner: 10,
+  });
+
+  await db.create('animal', {
+    id: 12,
+    species: 'cat',
+    color: 'black',
+    owner: 10,
+  });
+
+  const pets = await db.fetchRelated('user', 10, 'pets');
+
+  expected = [{
+    id: 11,
+    species: 'dog',
+    color: 'brown',
+    owner: {
+      id: 10,
+      name: 'Dylan',
+      email: 'dylanslack@gmail.com',
+      pets: [11, 12],
+      company: 13,
+    },
+  }, {
+    id: 12,
+    species: 'cat',
+    color: 'black',
+    owner: {
+      id: 10,
+      name: 'Dylan',
+      email: 'dylanslack@gmail.com',
+      pets: [11, 12],
+      company: 13,
+    },
+  }];
+
+  t.deepEqual(pets, expected, 'fetched pets has correct json');
+
+  const company = await db.fetchRelated('user', 10, 'company');
+
+  expected = {
+    id: 13,
+    name: 'Apple',
+    employees: [{
+      id: 10,
+      name: 'Dylan',
+      email: 'dylanslack@gmail.com',
+      pets: [11, 12],
+      company: 13,
+    }],
+  };
+
+  t.deepEqual(company, expected, 'fetched company has correct json');
 });
 
 test.after('teardown', async () => {

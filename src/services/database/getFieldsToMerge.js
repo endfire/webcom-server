@@ -43,7 +43,7 @@ import r from 'rethinkdb';
  *     .merge(function(user) {
  *       return r({}).merge(r.args([
  *         r.branch(user.hasFields('pets'), {
- *  		     pets: r.table('animals').getAll(r.args(user('pets'))).coerceTo('array'),
+ *           pets: r.table('animals').getAll(r.args(user('pets'))).coerceTo('array'),
  *         }, {}),
  *         r.branch(user.hasFields('company'), {
  *    	     company: r.table('companies').get(user('company'))

@@ -36,13 +36,15 @@ export default (schema, data) => {
   const relationships = keys(schema.relationships);
   const fields = attributes.concat(relationships);
 
-  let sanitized = {};
+  const sanitized = {};
 
   for (const field of fields) {
     if (data.hasOwnProperty(field)) {
-      sanitized = { ...sanitized, [field]: data[field] };
+      sanitized[field] = data[field];
     }
   }
+
+  if (data.hasOwnProperty('id')) sanitized.id = data.id;
 
   return sanitized;
 };
