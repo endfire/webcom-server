@@ -16,7 +16,7 @@ test.before('connect', async t => {
 test('run', async t => {
   const assertPost = res => {
     t.deepEqual(res, {
-      id: 500,
+      id: 600,
       name: 'Antenna',
       email: 'testman@test.com',
     }, 'Created user with correct data');
@@ -27,16 +27,18 @@ test('run', async t => {
     params: {
       table: 'user',
     },
-    body: {
-      id: 500,
-      name: 'Antenna',
-      email: 'testman@test.com',
+    request: {
+      body: {
+        id: 600,
+        name: 'Antenna',
+        email: 'testman@test.com',
+      },
     },
   }, assertPost, db);
 
   const assertPatch = res => {
     t.deepEqual(res, {
-      id: 500,
+      id: 600,
       name: 'Battery',
       email: 'testman@test.com',
     }, 'Updated user name');
@@ -46,10 +48,12 @@ test('run', async t => {
     method: 'patch',
     params: {
       table: 'user',
-      id: 500,
+      id: 600,
     },
-    body: {
-      name: 'Battery',
+    request: {
+      body: {
+        name: 'Battery',
+      },
     },
   }, assertPatch, db);
 
@@ -61,7 +65,12 @@ test('run', async t => {
     method: 'delete',
     params: {
       table: 'user',
-      id: 500,
+      id: 600,
+    },
+    request: {
+      body: {
+        id: 600,
+      },
     },
   }, assertDelete, db);
 
@@ -71,10 +80,12 @@ test('run', async t => {
     method: 'invalid',
     params: {
       table: 'user',
-      id: 500,
+      id: 600,
     },
-    body: {
-      name: 'Battery',
+    request: {
+      body: {
+        name: 'Battery',
+      },
     },
   }, assertInvalidMethod, db);
 });

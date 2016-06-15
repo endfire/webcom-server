@@ -1,19 +1,20 @@
-import db from '../../services';
+/* eslint-disable no-param-reassign */
+import { db } from '../../services';
 
 export const run = (ctx, next, database) => {
-  const { body, params, method } = ctx;
+  const { params, method, request: { body } } = ctx;
   const { table, id } = params;
   let dispatch;
 
   switch (method) {
     case 'post':
-      dispatch = database.create(table, body);
+      dispatch = database.create(table, body).then(record => (ctx.body = record));
       break;
     case 'patch':
-      dispatch = database.update(table, id, body);
+      dispatch = database.update(table, id, body).then(record => (ctx.body = record));
       break;
     case 'delete':
-      dispatch = database.delete(table, id);
+      dispatch = database.delete(table, id).then(status => (ctx.body = status));
       break;
     default:
       return next();
