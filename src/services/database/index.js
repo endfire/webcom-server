@@ -3,17 +3,17 @@ import sanitizeRequest from './sanitizeRequest';
 import getFieldsToMerge from './getFieldsToMerge';
 
 export default class Database {
-  constructor(schemas = {}, { db = '', host = '' }) {
+  constructor(schemas = {}, { name = '', host = '' }) {
     this.schemas = schemas;
-    this.db = db;
+    this.name = name;
     this.host = host;
   }
 
   connect() {
-    const { host, db } = this;
+    const { host, name } = this;
 
     return new Promise((resolve, reject) => {
-      r.connect({ host, db }).then(conn => {
+      r.connect({ host, name }).then(conn => {
         this.conn = conn;
         return resolve(conn);
       }).catch(reject);
@@ -36,7 +36,7 @@ export default class Database {
    *   company: 1,
    * }).then(user => {
    *   // inserted object
-   * })
+   * });
    * ```
    *
    * @param {String} type - The table name.
@@ -74,7 +74,7 @@ export default class Database {
    *   pets: [1, 2, 3],
    * }).then(user => {
    *   // updated object
-   * })
+   * });
    * ```
    *
    * @param {String} type - The table name.
@@ -107,7 +107,7 @@ export default class Database {
    * ```js
    * db.delete('user', 10).then(success => {
    *   // true or false
-   * })
+   * });
    * ```
    *
    * @param {String} type - The table name.
@@ -138,7 +138,7 @@ export default class Database {
    *   name: 'Dylan',
    * }).then(user => {
    *   // found object
-   * })
+   * });
    * ```
    *
    * @param {String} type - The table name.
@@ -166,7 +166,7 @@ export default class Database {
    * ```js
    * db.fetch('user', 10).then(user => {
    *   // fetched object
-   * })
+   * });
    * ```
    *
    * @param {String} type - The table name.
