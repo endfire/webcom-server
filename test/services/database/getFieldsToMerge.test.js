@@ -3,6 +3,9 @@ import test from 'ava';
 import getFieldsToMerge from '../../../src/services/database/getFieldsToMerge';
 import { schemas } from '../../fixtures';
 
+const userTable = 'user';
+const animalTable = 'animal';
+const companyTable = 'company';
 let conn;
 
 test.before('connect', async t => {
@@ -19,7 +22,7 @@ test.before('connect', async t => {
 });
 
 test('mergeRelationships with complete relationships', async t => {
-  await r.table('users').insert({
+  await r.table(userTable).insert({
     id: 1,
     name: 'Dylan',
     email: 'dylanslack@gmail.com',
@@ -34,13 +37,13 @@ test('mergeRelationships with complete relationships', async t => {
     ],
   }).run(conn);
 
-  await r.table('companies').insert({
+  await r.table(companyTable).insert({
     id: 1,
     name: 'Apple',
     employees: [1],
   }).run(conn);
 
-  await r.table('animals').insert([{
+  await r.table(animalTable).insert([{
     id: 1,
     species: 'dog',
     color: 'brown',
@@ -52,7 +55,7 @@ test('mergeRelationships with complete relationships', async t => {
     owner: 1,
   }]).run(conn);
 
-  const merged = await r.table('users')
+  const merged = await r.table('user')
     .get(1)
     .merge(getFieldsToMerge(schemas, 'user'))
     .run(conn);
@@ -90,20 +93,20 @@ test('mergeRelationships with complete relationships', async t => {
 });
 
 test('mergeRelationships with incomplete relationships', async t => {
-  await r.table('users').insert({
+  await r.table(userTable).insert({
     id: 2,
     name: 'Bobby',
     email: 'bobby@gmail.com',
     company: 2,
   }).run(conn);
 
-  await r.table('companies').insert({
+  await r.table(companyTable).insert({
     id: 2,
     name: 'IBM',
     employees: [],
   }).run(conn);
 
-  const merged = await r.table('users')
+  const merged = await r.table('user')
     .get(2)
     .merge(getFieldsToMerge(schemas, 'user'))
     .run(conn);

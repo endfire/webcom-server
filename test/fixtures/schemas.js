@@ -16,9 +16,6 @@ export default {
         embedded: true,
       },
     },
-    options: {
-      plural: 'users',
-    },
   },
   car: {
     attributes: {
@@ -35,9 +32,6 @@ export default {
         hasMany: 'user',
       },
     },
-    options: {
-      plural: 'companies',
-    },
   },
   animal: {
     attributes: {
@@ -48,9 +42,6 @@ export default {
       owner: {
         belongsTo: 'user',
       },
-    },
-    options: {
-      plural: 'animals',
     },
   },
 };

@@ -10,7 +10,7 @@ const host = process.env.RETHINKDB_URL;
 const port = process.env.PORT || 3000;
 const app = new Koa();
 const router = new Router();
-const db = new Database(schemas, { host, db: 'test' });
+const db = new Database(schemas, { host, db: 'webcom' });
 
 configureRoutes(router, routes);
 
@@ -20,5 +20,5 @@ app.listen(port, () => {
 
   db.connect(host)
     .then(() => console.log('Database is ready.'))
-    .catch(err => console.error('Database failed to connect: ', err.message));
+    .catch(({ message }) => console.error('Database failed to connect: ', message));
 });
