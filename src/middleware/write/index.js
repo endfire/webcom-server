@@ -1,25 +1,19 @@
-/**
- * Writes data to the database based on data and id.
- *
- * @param {Object} ctx
- * @param {Function} next
- * @param {Object} db - Connected database object passed down.
- * @return {Function}
- */
-export default (ctx, next, db) => {
+import db from '../../services';
+
+export const run = (ctx, next, database) => {
   const { body, params, method } = ctx;
   const { table, id } = params;
   let dispatch;
 
   switch (method) {
     case 'post':
-      dispatch = db.create(table, body);
+      dispatch = database.create(table, body);
       break;
     case 'patch':
-      dispatch = db.update(table, id, body);
+      dispatch = database.update(table, id, body);
       break;
     case 'delete':
-      dispatch = db.delete(table, id);
+      dispatch = database.delete(table, id);
       break;
     default:
       return next();
@@ -27,3 +21,12 @@ export default (ctx, next, db) => {
 
   return dispatch.then(next);
 };
+
+/**
+ * Writes data to the database based on data and id.
+ *
+ * @param {Object} ctx
+ * @param {Function} next
+ * @return {Function}
+ */
+export default (ctx, next) => run(ctx, next, db);

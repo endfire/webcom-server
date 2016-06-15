@@ -1,11 +1,11 @@
 import test from 'ava';
-import write from '../../../src/middleware/write';
+import { run } from '../../../src/middleware/write';
 import Database from '../../../src/services/database';
 import { schemas } from '../../fixtures';
 
 const db = new Database(schemas, {
   host: '107.170.131.151',
-  db: 'test',
+  name: 'test',
 });
 
 test.before('connect', async t => {
@@ -13,7 +13,7 @@ test.before('connect', async t => {
   t.truthy(db.conn, 'connection is present');
 });
 
-test('write', async t => {
+test('run', async t => {
   const assertPost = res => {
     t.deepEqual(res, {
       id: 500,
@@ -22,7 +22,7 @@ test('write', async t => {
     }, 'Created user with correct data');
   };
 
-  await write({
+  await run({
     method: 'post',
     params: {
       table: 'user',
@@ -42,7 +42,7 @@ test('write', async t => {
     }, 'Updated user name');
   };
 
-  await write({
+  await run({
     method: 'patch',
     params: {
       table: 'user',
@@ -57,7 +57,7 @@ test('write', async t => {
     t.is(res, true, 'User was deleted');
   };
 
-  await write({
+  await run({
     method: 'delete',
     params: {
       table: 'user',
@@ -67,7 +67,7 @@ test('write', async t => {
 
   const assertInvalidMethod = res => t.falsy(res, 'Should have proper method');
 
-  await write({
+  await run({
     method: 'invalid',
     params: {
       table: 'user',

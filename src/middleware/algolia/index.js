@@ -1,5 +1,7 @@
 import a from 'algoliasearch';
 
+console.log(process.env.ALGOLIA_ID);
+console.log(process.env.ALGOLIA_KEY);
 const client = a(process.env.ALGOLIA_ID, process.env.ALGOLIA_KEY);
 const index = client.initIndex('webcom');
 
