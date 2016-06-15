@@ -47,7 +47,9 @@ export default {
   },
   ad: {
     attributes: {
+      name: true,
       image: true,
+      cloudinary: true,
       url: true,
       start: true,
       end: true,
@@ -81,7 +83,8 @@ export default {
   brand: {
     attributes: {
       name: true,
-      image: 'image',
+      image: true,
+      cloudinary: true,
       background: true,
       text: true,
       secondary: true,
