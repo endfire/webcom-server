@@ -12,7 +12,7 @@ function database(schemas, host, name) {
         return db.connect();
       }
 
-      return db;
+      return db();
     },
   };
 }
