@@ -1,4 +1,3 @@
-import normalizeTableName from './normalizeTableName';
 import r from 'rethinkdb';
 
 /**
@@ -63,19 +62,19 @@ export default (schemas, type) => record => {
   const keys = Object.keys(relationships);
 
   return r({}).merge(r.args(keys.map(key => {
-    const relationship = relationships[key];
+    const { hasMany, belongsTo, embedded } = relationships[key];
 
     // don't merge embedded objects
-    if (relationship.embedded) return {};
+    if (embedded) return {};
 
-    if (relationship.hasMany) {
-      const table = r.table(normalizeTableName(schemas, relationship.hasMany));
+    if (hasMany) {
+      const table = r.table(hasMany);
 
       return r.branch(record.hasFields(key), {
         [key]: table.getAll(r.args(record(key))).coerceTo('array').orderBy('id'),
       }, {});
-    } else if (relationship.belongsTo) {
-      const table = r.table(normalizeTableName(schemas, relationship.belongsTo));
+    } else if (belongsTo) {
+      const table = r.table(belongsTo);
 
       return r.branch(record.hasFields(key), {
         [key]: table.get(record(key)),

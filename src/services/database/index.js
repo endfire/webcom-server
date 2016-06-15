@@ -1,5 +1,4 @@
 import r from 'rethinkdb';
-import normalizeTableName from './normalizeTableName';
 import sanitizeRequest from './sanitizeRequest';
 import getFieldsToMerge from './getFieldsToMerge';
 
@@ -25,9 +24,28 @@ export default class Database {
     return this.conn.close();
   }
 
+  /**
+   * Creates a new record inside of table `type` with attributes and relationships specified in
+   * `data`.
+   *
+   * ```js
+   * db.create('user', {
+   *   name: 'Dylan',
+   *   email: 'dylanslack@gmail.com',
+   *   pets: [1, 2],
+   *   company: 1,
+   * }).then(user => {
+   *   // inserted object
+   * })
+   * ```
+   *
+   * @param {String} type - The table name.
+   * @param {Object} data - Flattened JSON representing attributes and relationships.
+   * @return {Object}
+   */
   create(type, data) {
     const { conn, schemas } = this;
-    const table = r.table(normalizeTableName(schemas, type));
+    const table = r.table(type);
 
     const sanitizedData = sanitizeRequest(schemas[type], data);
     const fieldsToMerge = getFieldsToMerge(schemas, type);
@@ -47,9 +65,26 @@ export default class Database {
     });
   }
 
+  /**
+   * Updates the record with id `id` in table `type` with data `data`.
+   *
+   * ```js
+   * db.update('user', 10, {
+   *   name: 'Dy-lon',
+   *   pets: [1, 2, 3],
+   * }).then(user => {
+   *   // updated object
+   * })
+   * ```
+   *
+   * @param {String} type - The table name.
+   * @param {(String|Number)} id - The ID of the record that is going to be updated.
+   * @param {Object} data - Flattened JSON representing attributes and relationships.
+   * @return {Object}
+   */
   update(type, id, data) {
     const { conn, schemas } = this;
-    const table = r.table(normalizeTableName(schemas, type));
+    const table = r.table(type);
 
     const sanitizedData = sanitizeRequest(schemas[type], data);
     const fieldsToMerge = getFieldsToMerge(schemas, type);
@@ -58,7 +93,7 @@ export default class Database {
     return new Promise((resolve, reject) => {
       table
         .get(id)
-        .update(sanitizedData, { returnChanges: true })
+        .update(sanitizedData)
         .run(conn)
         .then(fetch)
         .then(resolve)
@@ -66,10 +101,22 @@ export default class Database {
     });
   }
 
+  /**
+   * Deletes the record with id `id` from the table `type`.
+   *
+   * ```js
+   * db.delete('user', 10).then(success => {
+   *   // true or false
+   * })
+   * ```
+   *
+   * @param {String} type - The table name.
+   * @param {(String|Number)} id - The ID of the record that is going to be deleted.
+   * @return {Boolean}
+   */
   delete(type, id) {
-    const { conn, schemas } = this;
-    const table = r.table(normalizeTableName(schemas, type));
-
+    const { conn } = this;
+    const table = r.table(type);
     const didSucceed = ({ deleted }) => deleted === 1;
 
     return new Promise((resolve, reject) => {
@@ -83,9 +130,24 @@ export default class Database {
     });
   }
 
+  /**
+   * Finds all records from the table `type` that match `filter`.
+   *
+   * ```js
+   * db.find('user', {
+   *   name: 'Dylan',
+   * }).then(user => {
+   *   // found object
+   * })
+   * ```
+   *
+   * @param {String} type - The table name.
+   * @param {(Object|Function)} fiter - The RethinkDB filter object or function.
+   * @return {Object[]}
+   */
   find(type, filter) {
     const { conn, schemas } = this;
-    const table = r.table(normalizeTableName(schemas, type));
+    const table = r.table(type);
     const fieldsToMerge = getFieldsToMerge(schemas, type);
 
     return new Promise((resolve, reject) => {
@@ -98,9 +160,22 @@ export default class Database {
     });
   }
 
+  /**
+   * Fetches a single record from table `table` with id `id`;
+   *
+   * ```js
+   * db.fetch('user', 10).then(user => {
+   *   // fetched object
+   * })
+   * ```
+   *
+   * @param {String} type - The table name.
+   * @param {(String|Number)} id - The ID of the record that is going to be fetched.
+   * @return {Object}
+   */
   fetch(type, id) {
     const { conn, schemas } = this;
-    const table = r.table(normalizeTableName(schemas, type));
+    const table = r.table(type);
     const fieldsToMerge = getFieldsToMerge(schemas, type);
 
     return new Promise((resolve, reject) => {
@@ -113,17 +188,33 @@ export default class Database {
     });
   }
 
+  /**
+   * Fetches the `field` relationship from the record with id `id` from the table `type`;
+   *
+   * ```js
+   * db.fetchRelated('user', 10, 'pets').then(pets => {
+   *   // all the pets
+   * });
+   *
+   * db.fetchRelated('user', 10, 'company').then(company => {
+   *   // company
+   * });
+   * ```
+   *
+   * @param {String} type - The table name.
+   * @param {(String|Number)} id - The ID of the record that is going to be fetched.
+   * @return {(Object|Object[])}
+   */
   fetchRelated(type, id, field) {
     const { conn, schemas } = this;
 
+    const parentTable = r.table(type);
     const relationship = schemas[type].relationships[field];
     const { hasMany, belongsTo, embedded } = relationship;
-    const parentTable = r.table(normalizeTableName(schemas, type));
-    const relatedType = hasMany || belongsTo;
 
     const relatedTable = hasMany
-      ? r.table(normalizeTableName(schemas, hasMany))
-      : r.table(normalizeTableName(schemas, belongsTo));
+      ? r.table(hasMany)
+      : r.table(belongsTo);
 
     let fetch;
 
@@ -135,7 +226,7 @@ export default class Database {
         : relatedTable.get(parentTable.get(id)(field));
     }
 
-    const fieldsToMerge = getFieldsToMerge(schemas, relatedType);
+    const fieldsToMerge = getFieldsToMerge(schemas, hasMany || belongsTo);
 
     return new Promise((resolve, reject) => {
       fetch
