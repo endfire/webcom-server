@@ -8,7 +8,6 @@ export const run = (ctx, next, database) => {
   if (method !== 'get') return next();
 
   const handleResponse = results => {
-    ctx.status = results ? 200 : 204;
     ctx.response.body = results;
     return (results);
   };
