@@ -142,10 +142,10 @@ export default class Database {
    * ```
    *
    * @param {String} type - The table name.
-   * @param {(Object|Function)} fiter - The RethinkDB filter object or function.
+   * @param {(Object|Function)} [fiter={}] - The RethinkDB filter object or function.
    * @return {Object[]}
    */
-  find(type, filter) {
+  find(type, filter = {}) {
     const { conn, schemas } = this;
     const table = r.table(type);
     const fieldsToMerge = getFieldsToMerge(schemas, type);
@@ -154,6 +154,8 @@ export default class Database {
       table
         .filter(filter)
         .merge(fieldsToMerge)
+        .coerceTo('array')
+        .orderBy('id')
         .run(conn)
         .then(resolve)
         .catch(reject);

@@ -1,21 +1,57 @@
 import test from 'ava';
+import r from 'rethinkdb';
 import { run } from '../../../src/middleware/read';
-import Database from '../../../src/services/database';
+import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
-const db = new Database(schemas, {
-  host: '107.170.131.151',
-  name: 'test',
-});
-
 test.before('connect', async t => {
-  await db.connect();
+  await db(schemas, '107.170.131.151', 'webcom').start();
+  t.truthy(db().conn, 'connection is present');
 
-  // FIXME: what the hell is db.conn in this assertion?
-  t.truthy(db.conn, 'connection is present');
+  await db().create('user', {
+    id: 123,
+    name: 'Fresh',
+    email: 'fresh@gmail.com',
+  });
+
+  await db().create('user', {
+    id: 124,
+    name: 'Doug',
+    email: 'doug@gmail.com',
+  });
 });
 
-test('fetch a record, find records, use invalid method', async t => {
+test('find a record', async t => {
+  const assertFind = res => {
+    t.deepEqual(res, [
+      {
+        id: 123,
+        name: 'Fresh',
+        email: 'fresh@gmail.com',
+      },
+      {
+        id: 124,
+        name: 'Doug',
+        email: 'doug@gmail.com',
+      },
+    ], 'Found the correct user record');
+  };
+
+  await run({
+    request: {
+      method: 'get',
+    },
+    params: {
+      table: 'user',
+      filter: r.row('name').eq('Doug').or(r.row('name').eq('Fresh')),
+    },
+    response: {
+      body: {},
+    },
+  }, assertFind, db);
+});
+
+test('fetch a record', async t => {
   const assertFetch = res => {
     t.deepEqual(res, {
       id: 123,
@@ -25,15 +61,33 @@ test('fetch a record, find records, use invalid method', async t => {
   };
 
   await run({
-    method: 'get',
+    request: {
+      method: 'get',
+    },
     params: {
       table: 'user',
       id: 123,
     },
+    response: {
+      body: {},
+    },
   }, assertFetch, db);
-}); // test
+});
 
-// FIXME: Why not "test.after.always()"? Just in case of failing tests.
-test.after('teardown', async () => {
-  await db.disconnect();
+test('invalid method', async t => {
+  const assertInvalidMethod = res => t.falsy(res, 'Did not use proper method, GET');
+
+  await run({
+    request: {
+      method: 'invalid-method',
+    },
+    params: {},
+    response: {
+      body: {},
+    },
+  }, assertInvalidMethod, db);
+});
+
+test.after.always('teardown', async () => {
+  await db().disconnect();
 });
