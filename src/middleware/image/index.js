@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import cloudinary from 'cloudinary';
-// import { schemas } from '../../schemas';
+import schemas from '../../schemas';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -16,44 +16,29 @@ cloudinary.config({
  * @return {Function}
  */
 export default (ctx, next) => {
-  const { table } = ctx.params;
-  const { body } = ctx.request;
+  const { method, params, request: { body } } = ctx;
+  const { table } = params;
+  let dispatch;
 
-  switch (ctx.method) {
-    case 'POST':
-      if (body.image) {
-        cloudinary.uploader.upload(body.image.path, { public_id: `${table}-${body.name}` });
-      }
-      break;
-    case 'PATCH':
-      ctx.body = 'PATCH image middleware!';
-      /* if (body.image) {
-        cloudinary.uploader.upload(body.image.path, (result) => {
+  if (!!schemas[table].attributes.image) {
+    switch (method) {
+      case 'post':
+        dispatch = cloudinary.uploader.upload(body.image, (result) => {
           body.image = result.secure_url;
-        },
-          {
-            public_id: body.cloudinary,
-            invalidate: true,
-          },
-        );
-      }*/
-
-      break;
-    case 'DELETE':
-      // Not sure exactly how to do this yet
-      if (schemas[table].image) {
-        cloudinary.uploader.destroy(body.cloudinary, (result) => {
-        },
-          {
-            invalidate: true,
-          }
-        );
-      }
-
-      break;
-    default:
-      return next();
+          ctx.body = body;
+        }, {
+          public_id: `${table}-1`,
+          invalidate: true,
+        });
+        break;
+      case 'patch':
+        break;
+      case 'delete':
+        break;
+      default:
+        return next();
+    }
   }
 
-  return next();
+  return dispatch.then(next);
 };
