@@ -137,7 +137,7 @@ export default {
       },
     },
   },
-  forms: {
+  form: {
     attributes: {
       name: true,
       published: true,
