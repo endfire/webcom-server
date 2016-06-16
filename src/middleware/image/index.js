@@ -1,12 +1,6 @@
 /* eslint-disable no-param-reassign */
-import cloudinary from 'cloudinary';
 import schemas from '../../schemas';
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET,
-});
+import upload from './uploadCloudinary';
 
 /**
  * Image middleware that adds, updates, or deletes an image from cloudinary.
@@ -16,28 +10,36 @@ cloudinary.config({
  * @return {Function}
  */
 export default (ctx, next) => {
-  const { method, params, request: { body } } = ctx;
-  const { table } = params;
+  const { params: { table }, request, response } = ctx;
+  const { body, method } = request;
   let dispatch;
 
-  if (!!schemas[table].attributes.image) {
-    switch (method) {
-      case 'post':
-        dispatch = cloudinary.uploader.upload(body.image, (result) => {
-          body.image = result.secure_url;
-          ctx.body = body;
-        }, {
-          public_id: `${table}-1`,
-          invalidate: true,
-        });
-        break;
-      case 'patch':
-        break;
-      case 'delete':
-        break;
-      default:
-        return next();
-    }
+  if (!schemas[table].attributes.image || !body.image) return next();
+
+  const handleWrite = result => {
+    response.body = {
+      ...body,
+      image: {
+        img: result.secure_url,
+        publicId: result.public_id,
+      },
+    };
+
+    return response.body;
+  };
+
+  switch (method) {
+    case 'post':
+      dispatch = upload(body.image, 'upload').then(handleWrite);
+      break;
+    case 'patch':
+      dispatch = upload(body.image, 'upload').then(handleWrite);
+      break;
+    case 'delete':
+      dispatch = upload(body.image, 'destroy').then(status => (response.body = status.result));
+      break;
+    default:
+      return next();
   }
 
   return dispatch.then(next);
