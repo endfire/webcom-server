@@ -6,8 +6,11 @@ import schemas from './schemas';
 import { configureRoutes } from './utils';
 import { db } from './services';
 
-const host = process.env.RETHINKDB_URL;
-const port = process.env.PORT || 3000;
+const {
+  RETHINKDB_URL: host,
+  PORT: port = 3000,
+} = process.env;
+
 const app = new Koa();
 const router = new Router();
 

@@ -1,50 +1,26 @@
-/* eslint-disable no-param-reassign */
+import { writeMiddleware, readMiddleware, authenticateMiddleware } from './middleware';
+
 export default {
-  '/': {
-    get(ctx) {
-      ctx.body = 'Hello world!!!';
-    },
-  },
-
   '/auth/token': {
-    post: {
-
-    },
+    post: authenticateMiddleware,
   },
 
   '/auth/verify': {
-    post: {
-
-    },
+    post: authenticateMiddleware,
   },
 
   '/auth/renew': {
-    post: {
-
-    },
+    post: authenticateMiddleware,
   },
 
   '/api/:table': {
-    get: {
-
-    },
-
-    post: {
-
-    },
+    get: readMiddleware,
+    post: writeMiddleware,
   },
 
   '/api/:table/:id': {
-    get: {
-
-    },
-
-    patch: {
-
-    },
-
-    del: {
-
-    },
+    get: readMiddleware,
+    patch: writeMiddleware,
+    del: writeMiddleware,
   },
 };

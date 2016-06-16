@@ -1,16 +1,11 @@
 import test from 'ava';
 import { run } from '../../../src/middleware/write';
-import Database from '../../../src/services/database';
+import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
-const db = new Database(schemas, {
-  host: '107.170.131.151',
-  name: 'test',
-});
-
 test.before('connect', async t => {
-  await db.connect();
-  t.truthy(db.conn, 'connection is present');
+  await db(schemas, '107.170.131.151', 'webcom').start();
+  t.truthy(db().conn, 'connection is present');
 });
 
 test('run', async t => {
@@ -91,5 +86,5 @@ test('run', async t => {
 });
 
 test.after('teardown', async () => {
-  await db.disconnect();
+  await db().disconnect();
 });
