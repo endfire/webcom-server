@@ -1,9 +1,12 @@
 /* eslint-disable no-param-reassign */
 import compose from 'koa-compose';
+import algolia from './algolia';
+import authenticate from './authenticate';
+import authorize from './authorize';
+import image from './image';
+import read from './read';
+import write from './write';
 
-function test(ctx, next) {
-  ctx.body = 'Middleware worked!';
-  return next();
-}
-
-export default compose([test]);
+export const writeMiddleware = compose([authorize, image, write, algolia]);
+export const readMiddleware = compose([authorize, read]);
+export const authenticateMiddleware = compose([authenticate]);
