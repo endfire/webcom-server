@@ -49,7 +49,6 @@ export default {
     attributes: {
       name: true,
       image: true,
-      cloudinary: true,
       url: true,
       start: true,
       end: true,
@@ -84,7 +83,6 @@ export default {
     attributes: {
       name: true,
       image: true,
-      cloudinary: true,
       background: true,
       text: true,
       secondary: true,

@@ -15,8 +15,9 @@ cloudinary.config({
  * @return {Function} - Cloudinary callback function
  */
 export default (image, verb) => {
-  const options = image.publicId ?
-    { public_id: image.publicId, invalidate: true } : { invalidate: true };
+  const options = image.publicId
+    ? { public_id: image.publicId, invalidate: true }
+    : { invalidate: true };
 
   const img = verb === 'upload' ? image.img : image.publicId;
   // noop - null function to pass to cloudinary as 2nd param

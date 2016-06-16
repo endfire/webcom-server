@@ -7,6 +7,6 @@ import image from './image';
 import read from './read';
 import write from './write';
 
-export const writeMiddleware = compose([authorize, write, image, algolia]);
+export const writeMiddleware = compose([authorize, image, write, algolia]);
 export const readMiddleware = compose([authorize, read]);
 export const authenticateMiddleware = compose([authenticate]);
