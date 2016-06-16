@@ -1,20 +1,16 @@
 import Database from './database';
 
-function database(schemas, host, name) {
-  let db;
+function db(schemas, host, name) {
+  if (db.instance) return db.instance;
 
   const createInstance = () => new Database(schemas, { host, name });
 
   return {
     start() {
-      if (db === undefined) {
-        db = createInstance();
-        return db.connect();
-      }
-
-      return db();
+      db.instance = createInstance();
+      return db.instance.connect();
     },
   };
 }
 
-export { database as db };
+export { db };
