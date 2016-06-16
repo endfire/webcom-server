@@ -1,21 +1,16 @@
 import test from 'ava';
-import Database from '../../../src/services/database';
+import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
-const db = new Database(schemas, {
-  host: '107.170.131.151',
-  name: 'test',
-});
-
 test.before('connect', async t => {
-  await db.connect();
-  t.truthy(db.conn, 'connection is present');
+  await db(schemas, '107.170.131.151', 'webcom').start();
+  t.truthy(db().conn, 'connection is present');
 });
 
 test('create, read, update, delete with no relationships', async t => {
   let user;
 
-  user = await db.create('user', {
+  user = await db().create('user', {
     name: 'Dylan',
     email: 'dylanslack@gmail.com',
   });
@@ -26,7 +21,7 @@ test('create, read, update, delete with no relationships', async t => {
     email: 'dylanslack@gmail.com',
   }, 'created user has correct json');
 
-  user = await db.fetch('user', user.id);
+  user = await db().fetch('user', user.id);
 
   t.deepEqual(user, {
     id: user.id,
@@ -34,7 +29,7 @@ test('create, read, update, delete with no relationships', async t => {
     email: 'dylanslack@gmail.com',
   }, 'fetched user has correct json');
 
-  user = await db.update('user', user.id, {
+  user = await db().update('user', user.id, {
     name: 'Dy-lon',
   });
 
@@ -44,7 +39,7 @@ test('create, read, update, delete with no relationships', async t => {
     email: 'dylanslack@gmail.com',
   }, 'updated user has correct json');
 
-  user = await db.delete('user', user.id);
+  user = await db().delete('user', user.id);
 
   t.is(user, true, 'user was successfully deleted');
 });
@@ -52,7 +47,7 @@ test('create, read, update, delete with no relationships', async t => {
 test('fetchRelated', async t => {
   let expected;
 
-  await db.create('user', {
+  await db().create('user', {
     id: 10,
     name: 'Dylan',
     email: 'dylanslack@gmail.com',
@@ -60,27 +55,27 @@ test('fetchRelated', async t => {
     company: 13,
   });
 
-  await db.create('company', {
+  await db().create('company', {
     id: 13,
     name: 'Apple',
     employees: [10],
   });
 
-  await db.create('animal', {
+  await db().create('animal', {
     id: 11,
     species: 'dog',
     color: 'brown',
     owner: 10,
   });
 
-  await db.create('animal', {
+  await db().create('animal', {
     id: 12,
     species: 'cat',
     color: 'black',
     owner: 10,
   });
 
-  const pets = await db.fetchRelated('user', 10, 'pets');
+  const pets = await db().fetchRelated('user', 10, 'pets');
 
   expected = [{
     id: 11,
@@ -108,7 +103,7 @@ test('fetchRelated', async t => {
 
   t.deepEqual(pets, expected, 'fetched pets has correct json');
 
-  const company = await db.fetchRelated('user', 10, 'company');
+  const company = await db().fetchRelated('user', 10, 'company');
 
   expected = {
     id: 13,
@@ -126,5 +121,5 @@ test('fetchRelated', async t => {
 });
 
 test.after('teardown', async () => {
-  await db.disconnect();
+  await db().disconnect();
 });
