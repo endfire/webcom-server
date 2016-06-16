@@ -47,6 +47,7 @@ export default {
   },
   ad: {
     attributes: {
+      name: true,
       image: true,
       url: true,
       start: true,
@@ -81,7 +82,7 @@ export default {
   brand: {
     attributes: {
       name: true,
-      image: 'image',
+      image: true,
       background: true,
       text: true,
       secondary: true,
