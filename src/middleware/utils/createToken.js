@@ -2,10 +2,18 @@ import jwt from 'jsonwebtoken';
 const secret = process.env.JWT_KEY;
 
 /**
- * JWT Fucntion to create token.
+ * JWT Function to create token.
  *
- * @param  {String}   id - ID of user.
- * @param  {Function} callback - Custom callback for create.
+ * @param {String} id - ID of user.
+ * @param {Function} callback - Custom callback for create.
  * @return {Function}
  */
-export default (id, callback) => jwt.sign(id, secret, callback);
+export default id => {
+  if (!id) return Promise.reject();
+
+  return new Promise((resolve, reject) => {
+    jwt.sign(id, secret, (err, token) => (
+      err ? reject(err) : resolve(token))
+    );
+  });
+};

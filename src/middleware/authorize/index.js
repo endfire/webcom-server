@@ -5,8 +5,8 @@ import verify from '../utils/verifyToken';
  * Authorize middleware to verify API calls.
  * TODO: Replace status codes with status middleware.
  *
- * @param  {Object}   ctx
- * @param  {Function} next
+ * @param {Object} ctx
+ * @param {Function} next
  * @return {Function}
  */
 export default (ctx, next) => {
