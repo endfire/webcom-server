@@ -10,14 +10,16 @@ import verify from '../utils/verifyToken';
  * @return {Function}
  */
 export default (ctx, next) => {
+  const { response } = ctx;
+
   const handleSuccess = () => {
-    ctx.status = 202;
-    return ctx.status;
+    response.status = 202;
+    return response.status;
   };
 
   const handleError = () => {
-    ctx.status = 403;
-    return ctx.status;
+    response.status = 403;
+    return response.status;
   };
 
   return verify(ctx)

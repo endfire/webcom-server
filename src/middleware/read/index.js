@@ -2,8 +2,8 @@
 import { db } from '../../services';
 
 export const run = (ctx, next, database) => {
-  const { table, id, filter } = ctx.params;
-  const { method } = ctx.request;
+  const { params, request: { method } } = ctx;
+  const { table, id, filter } = params;
 
   if (method !== 'get') return next();
 
