@@ -16,13 +16,13 @@ export default (ctx, next) => {
   let dispatch;
 
   switch (method) {
-    case 'post':
+    case 'POST':
       dispatch = index.addObject({ ...body, objectID: body.id });
       break;
-    case 'patch':
+    case 'PATCH':
       dispatch = index.partialUpdateObject({ ...body, objectID: body.id });
       break;
-    case 'delete':
+    case 'DELETE':
       dispatch = index.deleteObject(body.id);
       break;
     default:

@@ -5,7 +5,7 @@ export const run = (ctx, next, database) => {
   const { params, request: { method } } = ctx;
   const { table, id, filter } = params;
 
-  if (method !== 'get') return next();
+  if (method !== 'GET') return next();
 
   const handleResponse = results => {
     ctx.response.body = results;

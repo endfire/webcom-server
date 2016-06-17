@@ -9,7 +9,7 @@ test('algolia', async t => {
 
   await algolia({
     request: {
-      method: 'post',
+      method: 'POST',
       body: {
         id: 1,
         name: 'Dylan',
@@ -27,7 +27,7 @@ test('algolia', async t => {
 
   await algolia({
     request: {
-      method: 'patch',
+      method: 'PATCH',
       body: {
         id: 1,
         name: 'Dy-lon',
@@ -42,7 +42,7 @@ test('algolia', async t => {
 
   await algolia({
     request: {
-      method: 'delete',
+      method: 'DELETE',
       body: { id: 1 },
     },
   }, assertDelete);

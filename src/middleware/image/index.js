@@ -29,13 +29,13 @@ export default (ctx, next) => {
   };
 
   switch (method) {
-    case 'post':
+    case 'POST':
       dispatch = upload(body.image, 'upload').then(handleWrite);
       break;
-    case 'patch':
+    case 'PATCH':
       dispatch = upload(body.image, 'upload').then(handleWrite);
       break;
-    case 'delete':
+    case 'DELETE':
       dispatch = upload(body.image, 'destroy').then(status => (response.body = status.result));
       break;
     default:

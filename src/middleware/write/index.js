@@ -8,13 +8,13 @@ export const run = (ctx, next, database) => {
   let dispatch;
 
   switch (method) {
-    case 'post':
+    case 'POST':
       dispatch = database().create(table, body).then(record => (response.body = record));
       break;
-    case 'patch':
+    case 'PATCH':
       dispatch = database().update(table, id, body).then(record => (response.body = record));
       break;
-    case 'delete':
+    case 'DELETE':
       dispatch = database().delete(table, id).then(status => (response.body = status));
       break;
     default:

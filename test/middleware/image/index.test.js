@@ -18,7 +18,7 @@ test('image', async t => {
       body: {},
     },
     request: {
-      method: 'post',
+      method: 'POST',
       body: {
         id: 12,
         name: 'Antenna',
@@ -42,7 +42,7 @@ test('image', async t => {
       body: {},
     },
     request: {
-      method: 'patch',
+      method: 'PATCH',
       body: {
         id: 12,
         name: 'Antenna',
@@ -64,7 +64,7 @@ test('image', async t => {
       body: {},
     },
     request: {
-      method: 'delete',
+      method: 'DELETE',
       body: {
         id: 12,
         name: 'Antenna',
@@ -86,7 +86,7 @@ test('image', async t => {
       body: {},
     },
     request: {
-      method: 'delete',
+      method: 'DELETE',
       body: {
         id: 12,
         name: 'Antenna',
@@ -104,7 +104,7 @@ test('image', async t => {
       body: {},
     },
     request: {
-      method: 'get',
+      method: 'GET',
       body: {
         id: 12,
         name: 'Antenna',

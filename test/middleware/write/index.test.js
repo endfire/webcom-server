@@ -22,7 +22,7 @@ test('run', async t => {
       table: 'user',
     },
     request: {
-      method: 'post',
+      method: 'POST',
       body: {
         id: 600,
         name: 'Antenna',
@@ -48,7 +48,7 @@ test('run', async t => {
       id: 600,
     },
     request: {
-      method: 'patch',
+      method: 'PATCH',
       body: {
         name: 'Battery',
       },
@@ -68,7 +68,7 @@ test('run', async t => {
       id: 600,
     },
     request: {
-      method: 'delete',
+      method: 'DELETE',
       body: {
         id: 600,
       },

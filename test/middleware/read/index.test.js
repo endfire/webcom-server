@@ -39,7 +39,7 @@ test('find a record', async t => {
 
   await run({
     request: {
-      method: 'get',
+      method: 'GET',
     },
     params: {
       table: 'user',
@@ -62,7 +62,7 @@ test('fetch a record', async t => {
 
   await run({
     request: {
-      method: 'get',
+      method: 'GET',
     },
     params: {
       table: 'user',
