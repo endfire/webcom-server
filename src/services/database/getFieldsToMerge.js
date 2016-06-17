@@ -58,6 +58,8 @@ import r from 'rethinkdb';
  * @return {Function}
  */
 export default (schemas, type) => record => {
+  if (!('relationships' in schemas[type])) return r({});
+
   const { relationships } = schemas[type];
   const keys = Object.keys(relationships);
 

@@ -78,11 +78,13 @@ export default class Database {
    * ```
    *
    * @param {String} type - The table name.
-   * @param {(String|Number)} id - The ID of the record that is going to be updated.
+   * @param {String)} id - The ID of the record that is going to be updated.
    * @param {Object} data - Flattened JSON representing attributes and relationships.
    * @return {Object}
    */
   update(type, id, data) {
+    /* eslint-disable no-param-reassign */
+    id = `${id}`;
     const { conn, schemas } = this;
     const table = r.table(type);
 
@@ -111,10 +113,12 @@ export default class Database {
    * ```
    *
    * @param {String} type - The table name.
-   * @param {(String|Number)} id - The ID of the record that is going to be deleted.
+   * @param {String} id - The ID of the record that is going to be deleted.
    * @return {Boolean}
    */
   delete(type, id) {
+    /* eslint-disable no-param-reassign */
+    id = `${id}`;
     const { conn } = this;
     const table = r.table(type);
     const didSucceed = ({ deleted }) => deleted === 1;
@@ -172,10 +176,12 @@ export default class Database {
    * ```
    *
    * @param {String} type - The table name.
-   * @param {(String|Number)} id - The ID of the record that is going to be fetched.
+   * @param {String} id - The ID of the record that is going to be fetched.
    * @return {Object}
    */
   fetch(type, id) {
+    /* eslint-disable no-param-reassign */
+    id = `${id}`;
     const { conn, schemas } = this;
     const table = r.table(type);
     const fieldsToMerge = getFieldsToMerge(schemas, type);
@@ -204,10 +210,12 @@ export default class Database {
    * ```
    *
    * @param {String} type - The table name.
-   * @param {(String|Number)} id - The ID of the record that is going to be fetched.
+   * @param {String} id - The ID of the record that is going to be fetched.
    * @return {(Object|Object[])}
    */
   fetchRelated(type, id, field) {
+    /* eslint-disable no-param-reassign */
+    id = `${id}`;
     const { conn, schemas } = this;
 
     const parentTable = r.table(type);

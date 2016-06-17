@@ -5,17 +5,17 @@ import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
 test.before('connect', async t => {
-  await db(schemas, '107.170.131.151', 'webcom').start();
+  await db(schemas, process.env.RETHINKDB_URL, 'webcom').start();
   t.truthy(db().conn, 'connection is present');
 
   await db().create('user', {
-    id: 123,
+    id: '123',
     name: 'Fresh',
     email: 'fresh@gmail.com',
   });
 
   await db().create('user', {
-    id: 124,
+    id: '124',
     name: 'Doug',
     email: 'doug@gmail.com',
   });
@@ -25,12 +25,12 @@ test('find a record', async t => {
   const assertFind = res => {
     t.deepEqual(res, [
       {
-        id: 123,
+        id: '123',
         name: 'Fresh',
         email: 'fresh@gmail.com',
       },
       {
-        id: 124,
+        id: '124',
         name: 'Doug',
         email: 'doug@gmail.com',
       },
@@ -54,7 +54,7 @@ test('find a record', async t => {
 test('fetch a record', async t => {
   const assertFetch = res => {
     t.deepEqual(res, {
-      id: 123,
+      id: '123',
       name: 'Fresh',
       email: 'fresh@gmail.com',
     }, 'Fetched the correct user record');
@@ -66,7 +66,7 @@ test('fetch a record', async t => {
     },
     params: {
       table: 'user',
-      id: 123,
+      id: '123',
     },
     response: {
       body: {},

@@ -4,14 +4,14 @@ import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
 test.before('connect', async t => {
-  await db(schemas, '107.170.131.151', 'webcom').start();
+  await db(schemas, process.env.RETHINKDB_URL, 'webcom').start();
   t.truthy(db().conn, 'connection is present');
 });
 
 test('run', async t => {
   const assertPost = res => {
     t.deepEqual(res, {
-      id: 600,
+      id: '600',
       name: 'Antenna',
       email: 'testman@test.com',
     }, 'Created user with correct data');
@@ -24,7 +24,7 @@ test('run', async t => {
     request: {
       method: 'POST',
       body: {
-        id: 600,
+        id: '600',
         name: 'Antenna',
         email: 'testman@test.com',
       },
@@ -36,7 +36,7 @@ test('run', async t => {
 
   const assertPatch = res => {
     t.deepEqual(res, {
-      id: 600,
+      id: '600',
       name: 'Battery',
       email: 'testman@test.com',
     }, 'Updated user name');
@@ -45,7 +45,7 @@ test('run', async t => {
   await run({
     params: {
       table: 'user',
-      id: 600,
+      id: '600',
     },
     request: {
       method: 'PATCH',
@@ -65,12 +65,12 @@ test('run', async t => {
   await run({
     params: {
       table: 'user',
-      id: 600,
+      id: '600',
     },
     request: {
       method: 'DELETE',
       body: {
-        id: 600,
+        id: '600',
       },
     },
     response: {
@@ -83,7 +83,7 @@ test('run', async t => {
   await run({
     params: {
       table: 'user',
-      id: 600,
+      id: '600',
     },
     request: {
       method: 'invalid',

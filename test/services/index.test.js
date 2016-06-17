@@ -3,7 +3,7 @@ import { db } from '../../src/services';
 import { schemas } from '../fixtures';
 
 test('database singleton', t => {
-  db(schemas, '107.170.131.151', 'test').start();
+  db(schemas, process.env.RETHINKDB_URL, 'test').start();
 
   const first = db();
   const second = db();
