@@ -18,16 +18,19 @@ test('run', async t => {
   };
 
   await run({
-    method: 'post',
     params: {
       table: 'user',
     },
     request: {
+      method: 'post',
       body: {
         id: 600,
         name: 'Antenna',
         email: 'testman@test.com',
       },
+    },
+    response: {
+      body: {},
     },
   }, assertPost, db);
 
@@ -40,15 +43,18 @@ test('run', async t => {
   };
 
   await run({
-    method: 'patch',
     params: {
       table: 'user',
       id: 600,
     },
     request: {
+      method: 'patch',
       body: {
         name: 'Battery',
       },
+    },
+    response: {
+      body: {},
     },
   }, assertPatch, db);
 
@@ -57,27 +63,30 @@ test('run', async t => {
   };
 
   await run({
-    method: 'delete',
     params: {
       table: 'user',
       id: 600,
     },
     request: {
+      method: 'delete',
       body: {
         id: 600,
       },
+    },
+    response: {
+      body: {},
     },
   }, assertDelete, db);
 
   const assertInvalidMethod = res => t.falsy(res, 'Should have proper method');
 
   await run({
-    method: 'invalid',
     params: {
       table: 'user',
       id: 600,
     },
     request: {
+      method: 'invalid',
       body: {
         name: 'Battery',
       },

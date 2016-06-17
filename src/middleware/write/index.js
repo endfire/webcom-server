@@ -2,19 +2,20 @@
 import { db } from '../../services';
 
 export const run = (ctx, next, database) => {
-  const { params, method, request: { body } } = ctx;
+  const { params, request, response } = ctx;
   const { table, id } = params;
+  const { body, method } = request;
   let dispatch;
 
   switch (method) {
     case 'post':
-      dispatch = database().create(table, body).then(record => (ctx.body = record));
+      dispatch = database().create(table, body).then(record => (response.body = record));
       break;
     case 'patch':
-      dispatch = database().update(table, id, body).then(record => (ctx.body = record));
+      dispatch = database().update(table, id, body).then(record => (response.body = record));
       break;
     case 'delete':
-      dispatch = database().delete(table, id).then(status => (ctx.body = status));
+      dispatch = database().delete(table, id).then(status => (response.body = status));
       break;
     default:
       return next();

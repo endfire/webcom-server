@@ -8,13 +8,15 @@ test('algolia', async t => {
   };
 
   await algolia({
-    method: 'post',
-    body: {
-      id: 1,
-      name: 'Dylan',
-      email: 'dylanslack@gmail.com',
-      pets: [1, 2],
-      company: 1,
+    request: {
+      method: 'post',
+      body: {
+        id: 1,
+        name: 'Dylan',
+        email: 'dylanslack@gmail.com',
+        pets: [1, 2],
+        company: 1,
+      },
     },
   }, assertPost);
 
@@ -24,10 +26,12 @@ test('algolia', async t => {
   };
 
   await algolia({
-    method: 'patch',
-    body: {
-      id: 1,
-      name: 'Dy-lon',
+    request: {
+      method: 'patch',
+      body: {
+        id: 1,
+        name: 'Dy-lon',
+      },
     },
   }, assertPatch);
 
@@ -37,13 +41,17 @@ test('algolia', async t => {
   };
 
   await algolia({
-    method: 'delete',
-    body: { id: 1 },
+    request: {
+      method: 'delete',
+      body: { id: 1 },
+    },
   }, assertDelete);
 
   const assertInvalidMethod = res => t.falsy(res, 'should have no argument');
 
   await algolia({
-    method: 'invalid-method',
+    request: {
+      method: 'invalid-method',
+    },
   }, assertInvalidMethod);
 });

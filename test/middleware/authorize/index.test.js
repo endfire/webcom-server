@@ -15,6 +15,7 @@ test('authorize', async t => {
         authorization: token,
       },
     },
+    response: {},
   }, assertCall);
 
   const assertMissingKey = res => t.is(res, 403, 'request not authorized');
@@ -25,6 +26,7 @@ test('authorize', async t => {
         authenticate: token,
       },
     },
+    response: {},
   }, assertMissingKey);
 
   const assertInvalidToken = res => t.is(res, 403, 'invalid token');
@@ -35,5 +37,6 @@ test('authorize', async t => {
         authorization: 'invalid-token',
       },
     },
+    response: {},
   }, assertInvalidToken);
 });

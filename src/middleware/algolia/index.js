@@ -11,7 +11,8 @@ const index = client.initIndex('webcom');
  * @return {Function}
  */
 export default (ctx, next) => {
-  const { body, method } = ctx;
+  const { request } = ctx;
+  const { body, method } = request;
   let dispatch;
 
   switch (method) {
