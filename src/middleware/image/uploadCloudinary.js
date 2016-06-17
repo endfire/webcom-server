@@ -9,7 +9,6 @@ cloudinary.config({
 /**
  * Upload Function to upload, replace, and delete from cloudinary.
  *
- *
  * @param {Object} image - Object containing img and publicId
  * @param {String} verb - Either upload or destroy for cloudinary uploader
  * @return {Function} - Cloudinary callback function

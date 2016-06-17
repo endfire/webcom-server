@@ -4,7 +4,7 @@ const secret = process.env.JWT_KEY;
 /**
  * JWT Function to verify token.
  *
- * @param  {String}   ctx
+ * @param {String} ctx
  * @return {Function}
  */
 export default ctx => {
