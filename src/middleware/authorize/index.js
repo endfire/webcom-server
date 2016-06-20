@@ -10,7 +10,8 @@ import verify from '../utils/verifyToken';
  * @return {Function}
  */
 export default (ctx, next) => {
-  const { response } = ctx;
+  const { response, request: { header } } = ctx;
+  const { authorization } = header;
 
   const handleSuccess = () => {
     response.status = 202;
@@ -22,7 +23,7 @@ export default (ctx, next) => {
     return response.status;
   };
 
-  return verify(ctx)
+  return verify(authorization)
     .then(handleSuccess)
     .then(next)
     .catch(handleError);
