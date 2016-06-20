@@ -13,6 +13,10 @@ export default {
     post: authenticateMiddleware,
   },
 
+  '/auth/signup': {
+    post: authenticateMiddleware,
+  },
+
   '/api/:table': {
     get: readMiddleware,
     post: writeMiddleware,

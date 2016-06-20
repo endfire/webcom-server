@@ -29,6 +29,12 @@ export default {
       color: true,
     },
   },
+  dummy: {
+    attributes: {
+      email: true,
+      password: true,
+    },
+  },
   company: {
     attributes: {
       name: true,

@@ -10,10 +10,9 @@ const secret = process.env.JWT_KEY;
  */
 export default id => {
   if (!id) return Promise.reject();
-
   return new Promise((resolve, reject) => {
-    jwt.sign(id, secret, (err, token) => (
-      err ? reject(err) : resolve(token))
-    );
+    jwt.sign(id, secret, { algorithm: 'HS256' }, (err, token) => (
+      err ? reject(err) : resolve(token)
+    ));
   });
 };

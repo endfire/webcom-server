@@ -12,7 +12,7 @@ export default token => {
 
   return new Promise((resolve, reject) => {
     jwt.verify(token, secret, (err, decoded) => (
-      err ? reject(err) : resolve(decoded))
-    );
+       err ? reject(err) : resolve(decoded)
+    ));
   });
 };
