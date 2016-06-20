@@ -4,7 +4,7 @@ import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
 test.before('connect', async t => {
-  await db(schemas, process.env.RETHINKDB_URL, 'webcom').start();
+  await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
   t.truthy(db().conn, 'connection is present');
 });
 

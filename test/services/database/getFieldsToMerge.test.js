@@ -12,7 +12,7 @@ test.before('connect', async t => {
   try {
     conn = await r.connect({
       host: process.env.RETHINKDB_URL,
-      db: 'test',
+      db: process.env.RETHINKDB_NAME,
     });
 
     t.truthy(conn, 'successfully connected to RethinkDB');

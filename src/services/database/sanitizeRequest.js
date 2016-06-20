@@ -33,7 +33,7 @@
 export default (schema, data) => {
   const { keys } = Object;
   const attributes = keys(schema.attributes);
-  const relationships = keys(schema.relationships);
+  const relationships = !schema.relationships ? [] : keys(schema.relationships);
   const fields = attributes.concat(relationships);
 
   const sanitized = {};

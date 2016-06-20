@@ -3,7 +3,7 @@ import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
 test.before('connect', async t => {
-  await db(schemas, process.env.RETHINKDB_URL, 'webcom').start();
+  await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
   t.truthy(db().conn, 'connection is present');
 });
 
@@ -120,6 +120,6 @@ test('fetchRelated', async t => {
   t.deepEqual(company, expected, 'fetched company has correct json');
 });
 
-test.after('teardown', async () => {
+test.after.always('teardown', async () => {
   await db().disconnect();
 });

@@ -135,6 +135,33 @@ export default class Database {
   }
 
   /**
+   * Cleares all records from the table `type`.
+   *
+   * ```js
+   * db.clearTable('user').then(success => {
+   *   // true or false
+   * });
+   * ```
+   *
+   * @param {String} type - The table name.
+   * @return {Boolean}
+   */
+  clearTable(type) {
+    const { conn } = this;
+    const table = r.table(type);
+    const didSucceed = ({ errors }) => errors === 0;
+
+    return new Promise((resolve, reject) => {
+      table
+        .delete()
+        .run(conn)
+        .then(didSucceed)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  /**
    * Finds all records from the table `type` that match `filter`.
    *
    * ```js

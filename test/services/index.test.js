@@ -3,7 +3,7 @@ import { db } from '../../src/services';
 import { schemas } from '../fixtures';
 
 test('database singleton', t => {
-  db(schemas, process.env.RETHINKDB_URL, 'test').start();
+  db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
 
   const first = db();
   const second = db();

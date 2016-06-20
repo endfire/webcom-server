@@ -5,16 +5,20 @@ import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
 test.before('connect', async t => {
-  await db(schemas, process.env.RETHINKDB_URL, 'webcom').start();
+  await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
   t.truthy(db().conn, 'connection is present');
 
-  await db().create('user', {
+  const table = await db().clearTable('person');
+
+  t.is(table, true, 'person table successfully cleared');
+
+  await db().create('person', {
     id: '123',
     name: 'Fresh',
     email: 'fresh@gmail.com',
   });
 
-  await db().create('user', {
+  await db().create('person', {
     id: '124',
     name: 'Doug',
     email: 'doug@gmail.com',
@@ -34,7 +38,7 @@ test('find a record', async t => {
         name: 'Doug',
         email: 'doug@gmail.com',
       },
-    ], 'Found the correct user record');
+    ], 'Found the correct person record');
   };
 
   await run({
@@ -42,7 +46,7 @@ test('find a record', async t => {
       method: 'GET',
     },
     params: {
-      table: 'user',
+      table: 'person',
       filter: r.row('name').eq('Doug').or(r.row('name').eq('Fresh')),
     },
     response: {
@@ -57,7 +61,7 @@ test('fetch a record', async t => {
       id: '123',
       name: 'Fresh',
       email: 'fresh@gmail.com',
-    }, 'Fetched the correct user record');
+    }, 'Fetched the correct person record');
   };
 
   await run({
@@ -65,7 +69,7 @@ test('fetch a record', async t => {
       method: 'GET',
     },
     params: {
-      table: 'user',
+      table: 'person',
       id: '123',
     },
     response: {

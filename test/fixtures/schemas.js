@@ -17,6 +17,12 @@ export default {
       },
     },
   },
+  person: {
+    attributes: {
+      name: true,
+      email: true,
+    },
+  },
   car: {
     attributes: {
       type: true,
