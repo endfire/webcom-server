@@ -36,7 +36,7 @@ export const run = (ctx, next, database) => {
     return response.status;
   };
 
-  if (method !== 'POST') return handleError;
+  if (method !== 'POST') return handleError();
 
   const retrieveUserId = res => createUser(res, database);
 
@@ -62,7 +62,7 @@ export const run = (ctx, next, database) => {
         .catch(handleError);
       break;
     default:
-      return handleError;
+      return handleError();
   }
 
   return dispatch.then(next);
