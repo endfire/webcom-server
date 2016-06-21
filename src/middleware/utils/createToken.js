@@ -8,11 +8,10 @@ const secret = process.env.JWT_KEY;
  * @param {Function} callback - Custom callback for create.
  * @return {Function}
  */
-export default id => {
-  if (!id) return Promise.reject();
-  return new Promise((resolve, reject) => {
+export default id => (
+  new Promise((resolve, reject) => {
     jwt.sign(id, secret, { algorithm: 'HS256' }, (err, token) => (
       err ? reject(err) : resolve(token)
     ));
-  });
-};
+  })
+);

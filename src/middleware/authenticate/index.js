@@ -6,15 +6,20 @@ import bcryptCompare from '../utils/bcryptCompare';
 import createUser from './createUser';
 import findUser from './findUser';
 import { db } from '../../services';
+import { Unauthorized, MethodNotAllowed, BadRequest, NotAcceptable } from 'http-errors';
 
 export const run = (ctx, next, database) => {
   const { request, response } = ctx;
   const { method, path } = request;
   let dispatch;
 
-  // NOTE: May want to make this more specific to each error encountered
-  const handleError = () => {
-    response.status = 403;
+  const handleToken = token => {
+    response.body.token = token;
+    return response;
+  };
+
+  const handleVerify = () => {
+    response.status = 202;
     return response.status;
   };
 
@@ -23,20 +28,13 @@ export const run = (ctx, next, database) => {
     return request.body;
   };
 
-  const handleToken = token => {
-    response.body.token = token;
-    return response;
-  };
-
   const handleUser = user => bcryptCompare(request.body.password, user.password)
-    .then(res => (res ? user.id : Promise.reject()));
+    .then(res => {
+      if (res) return user.id;
+      throw new NotAcceptable();
+    });
 
-  const handleVerify = () => {
-    response.status = 202;
-    return response.status;
-  };
-
-  if (method !== 'POST') return handleError();
+  if (method !== 'POST') return new MethodNotAllowed();
 
   const retrieveUserId = res => createUser(res, database);
 
@@ -47,22 +45,22 @@ export const run = (ctx, next, database) => {
         .then(retrieveUserId)
         .then(createToken)
         .then(handleToken)
-        .catch(handleError);
+        .catch(err => err);
       break;
     case '/auth/verify':
       dispatch = verifyToken(request.body.token)
         .then(handleVerify)
-        .catch(handleError);
+        .catch(Unauthorized);
       break;
     case '/auth/token':
       dispatch = findUser({ email: request.body.email }, database)
         .then(handleUser)
         .then(createToken)
         .then(handleToken)
-        .catch(handleError);
+        .catch(err => err);
       break;
     default:
-      return handleError();
+      return new BadRequest();
   }
 
   return dispatch.then(next);

@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { NotAcceptable } from 'http-errors';
 
 /**
  * Bcrypt function to compare password.
@@ -8,7 +9,7 @@ import bcrypt from 'bcrypt';
  * @return {Function}
  */
 export default (plaintextPassword, hashedPassword) => {
-  if (!plaintextPassword || !hashedPassword) return Promise.reject();
+  if (!plaintextPassword || !hashedPassword) throw new NotAcceptable();
 
   return new Promise((resolve, reject) => {
     bcrypt.compare(plaintextPassword, hashedPassword, (err, res) => (
