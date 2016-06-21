@@ -11,3 +11,7 @@ deployment:
     branch: master
     heroku:
       appname: webcom-server
+  staging:
+    branch: master
+    heroku:
+      appname: webcom-server-staging

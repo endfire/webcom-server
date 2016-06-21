@@ -8,23 +8,39 @@
     "node": "6.0.0"
   },
   "scripts": {
-    "build": "rimraf build && mkdirp build && babel src --out-dir build --source-maps inline",
-    "build:watch": "npm run build -- --watch",
+    "build": "better-npm-run build",
+    "build:prod": "better-npm-run build:prod",
+    "clean": "better-npm-run clean",
     "cover": "better-npm-run cover",
-    "heroku:dev": "heroku local -f Procfile.dev",
-    "start": "npm run build && node build",
-    "start:dev": "nodemon build",
-    "test": "npm run test:lint && npm run test:src",
-    "test:lint": "eslint src test",
-    "test:src": "better-npm-run test:src",
-    "test:watch": "ava --watch"
+    "start": "better-npm-run start",
+    "test": "better-npm-run test",
+    "test:lint": "better-npm-run test:lint",
+    "test:src": "better-npm-run test:src"
   },
   "betterScripts": {
-    "test:src": {
-      "command": "nyc ava && nyc report --reporter=lcov"
+    "build": {
+      "command": "npm run clean && mkdirp build && babel src --out-dir build --source-maps inline"
+    },
+    "build:prod": {
+      "command": "npm run clean && mkdirp build && babel src --out-dir build"
+    },
+    "clean": {
+      "command": "rimraf build coverage .nyc_output"
     },
     "cover": {
-      "command": "rimraf coverage .nyc_output && nyc ava && nyc report --reporter=html && open -a \"Google Chrome\" coverage/index.html"
+      "command": "npm run clean && nyc ava && nyc report --reporter=html && open -a \"Google Chrome\" coverage/index.html"
+    },
+    "start": {
+      "command": "npm run build && node build"
+    },
+    "test": {
+      "command": "npm run test:lint && npm run test:src"
+    },
+    "test:lint": {
+      "command": "eslint src test"
+    },
+    "test:src": {
+      "command": "nyc ava && nyc report --reporter=lcov"
     }
   },
   "repository": {
