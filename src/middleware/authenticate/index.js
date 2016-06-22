@@ -13,6 +13,8 @@ export const run = (ctx, next, database) => {
   const { method, path } = request;
   let dispatch;
 
+  if (method !== 'POST') return new MethodNotAllowed();
+
   const handleToken = token => {
     response.body.token = token;
     return response;
@@ -34,9 +36,10 @@ export const run = (ctx, next, database) => {
       throw new NotAcceptable();
     });
 
-  if (method !== 'POST') return new MethodNotAllowed();
-
   const retrieveUserId = res => createUser(res, database);
+
+  // This is a temporary handler pending `bluebird` filter .catch implementation
+  const handleError = err => err;
 
   switch (path) {
     case '/auth/signup':
@@ -45,7 +48,7 @@ export const run = (ctx, next, database) => {
         .then(retrieveUserId)
         .then(createToken)
         .then(handleToken)
-        .catch(err => err);
+        .catch(handleError);
       break;
     case '/auth/verify':
       dispatch = verifyToken(request.body.token)
@@ -57,7 +60,7 @@ export const run = (ctx, next, database) => {
         .then(handleUser)
         .then(createToken)
         .then(handleToken)
-        .catch(err => err);
+        .catch(handleError);
       break;
     default:
       return new BadRequest();
