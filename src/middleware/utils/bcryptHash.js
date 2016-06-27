@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { NotAcceptable } from 'http-errors';
+import { NotAcceptable, BadRequest } from 'http-errors';
 const saltRounds = 10;
 
 /**
@@ -13,7 +13,7 @@ export default password => {
 
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, saltRounds, (err, hash) => (
-      err ? reject(err) : resolve(hash)
+      err ? reject(new BadRequest()) : resolve(hash)
     ));
   });
 };

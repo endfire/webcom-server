@@ -3,6 +3,14 @@ export default {
     attributes: {
       name: true,
       email: true,
+      password: true,
+      role: true,
+    },
+  },
+  individual: {
+    attributes: {
+      name: true,
+      email: true,
     },
     relationships: {
       company: {
@@ -21,6 +29,8 @@ export default {
     attributes: {
       name: true,
       email: true,
+      phone: true,
+      job: true,
     },
   },
   car: {
@@ -33,6 +43,8 @@ export default {
     attributes: {
       email: true,
       password: true,
+      name: true,
+      role: true,
     },
   },
   company: {
@@ -41,7 +53,7 @@ export default {
     },
     relationships: {
       employees: {
-        hasMany: 'user',
+        hasMany: 'individual',
       },
     },
   },
@@ -52,7 +64,21 @@ export default {
     },
     relationships: {
       owner: {
-        belongsTo: 'user',
+        belongsTo: 'individual',
+      },
+    },
+  },
+  brand: {
+    attributes: {
+      name: true,
+      image: true,
+      background: true,
+      text: true,
+      secondary: true,
+    },
+    relationships: {
+      forms: {
+        hasMany: 'form',
       },
     },
   },

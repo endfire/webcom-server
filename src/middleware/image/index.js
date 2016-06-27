@@ -11,32 +11,37 @@ import upload from './uploadCloudinary';
  */
 export default (ctx, next) => {
   const { params: { table }, request, response } = ctx;
-  const { body, method } = request;
+  const { method } = request;
   let dispatch;
 
-  if (!schemas[table].attributes.image || !body.image) return next();
+  if (!schemas[table].attributes || !schemas[table].attributes.image || !request.body.image) {
+    return next();
+  }
 
   const handleWrite = result => {
-    response.body = {
-      ...body,
+    request.body = {
+      ...request.body,
       image: {
         img: result.secure_url,
         publicId: result.public_id,
       },
     };
 
-    return response.body;
+    return request;
   };
 
   switch (method) {
     case 'POST':
-      dispatch = upload(body.image, 'upload').then(handleWrite);
+      dispatch = upload(request.body.image, 'upload').then(handleWrite);
       break;
     case 'PATCH':
-      dispatch = upload(body.image, 'upload').then(handleWrite);
+      dispatch = upload(request.body.image, 'upload').then(handleWrite);
       break;
     case 'DELETE':
-      dispatch = upload(body.image, 'destroy').then(status => (response.body = status.result));
+      dispatch = upload(request.body.image, 'destroy').then(status => {
+        response.body = status;
+        return response;
+      });
       break;
     default:
       return next();

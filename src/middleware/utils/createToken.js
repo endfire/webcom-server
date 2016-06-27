@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 const secret = process.env.JWT_KEY;
+import { BadRequest } from 'http-errors';
 
 /**
  * JWT Function to create token.
@@ -11,7 +12,7 @@ const secret = process.env.JWT_KEY;
 export default id => (
   new Promise((resolve, reject) => {
     jwt.sign(id, secret, { algorithm: 'HS256' }, (err, token) => (
-      err ? reject(err) : resolve(token)
+      err ? reject(new BadRequest()) : resolve(token)
     ));
   })
 );

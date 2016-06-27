@@ -15,7 +15,8 @@
     "start": "better-npm-run start",
     "test": "better-npm-run test",
     "test:lint": "better-npm-run test:lint",
-    "test:src": "better-npm-run test:src"
+    "test:src": "better-npm-run test:src",
+    "integration:start": "better-npm-run integration:start"
   },
   "betterScripts": {
     "build": {
@@ -41,6 +42,13 @@
     },
     "test:src": {
       "command": "nyc ava && nyc report --reporter=lcov"
+    },
+    "integration:start": {
+      "command": "npm start",
+      "env": {
+        "RETHINKDB_NAME": "staging",
+        "AUTHENTICATE_TABLE": "user"
+      }
     }
   },
   "repository": {
@@ -63,11 +71,15 @@
     "http-errors": "^1.5.0",
     "jsonwebtoken": "^7.0.1",
     "koa": "^2.0.0",
+    "koa-bodyparser": "^3.1.0",
     "koa-compose": "^3.1.0",
     "koa-router": "^7.0.1",
     "mkdirp": "^0.5.1",
+    "mocha": "^2.5.3",
     "rethinkdb": "^2.3.2",
-    "rimraf": "^2.5.2"
+    "rimraf": "^2.5.2",
+    "supertest": "^1.2.0",
+    "supertest-as-promised": "^3.1.0"
   },
   "devDependencies": {
     "ava": "^0.15.2",
@@ -77,7 +89,9 @@
     "eslint-plugin-import": "^1.8.1",
     "eslint-plugin-jsx-a11y": "^1.4.2",
     "eslint-plugin-react": "^5.1.1",
-    "nyc": "^6.4.4"
+    "nyc": "^6.4.4",
+    "supertest": "^1.2.0",
+    "tape": "^4.6.0"
   },
   "ava": {
     "files": [

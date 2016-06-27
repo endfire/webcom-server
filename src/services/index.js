@@ -1,13 +1,21 @@
 import Database from './database';
 
 function db(schemas, host, name) {
-  if (db.instance) return db.instance;
+  if (db.instance) {
+    return {
+      instance() {
+        return db.instance;
+      },
 
-  const createInstance = () => new Database(schemas, { host, name });
+      stop() {
+        return db.instance.disconnect();
+      },
+    };
+  }
 
   return {
     start() {
-      db.instance = createInstance();
+      db.instance = new Database(schemas, { host, name });
       return db.instance.connect();
     },
   };

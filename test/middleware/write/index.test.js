@@ -3,17 +3,23 @@ import { run } from '../../../src/middleware/write';
 import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
-test.before('connect', async t => {
+test.before('Write: Connect to database', async t => {
   await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
-  t.truthy(db().conn, 'connection is present');
+  t.truthy(db().instance().conn, 'connection is present');
+
+  const table = await db().instance().clearTable('user');
+
+  t.is(table, true, 'table (dummy) successfully cleared');
 });
 
-test('run', async t => {
+test('Write: Post, patch, and delete', async t => {
   const assertPost = res => {
-    t.deepEqual(res, {
+    t.deepEqual(res.body, {
       id: '600',
       name: 'Antenna',
       email: 'testman@test.com',
+      role: '1',
+      password: 'hahaha',
     }, 'Created user with correct data');
   };
 
@@ -27,6 +33,8 @@ test('run', async t => {
         id: '600',
         name: 'Antenna',
         email: 'testman@test.com',
+        role: '1',
+        password: 'hahaha',
       },
     },
     response: {
@@ -35,10 +43,12 @@ test('run', async t => {
   }, assertPost, db);
 
   const assertPatch = res => {
-    t.deepEqual(res, {
+    t.deepEqual(res.body, {
       id: '600',
       name: 'Battery',
       email: 'testman@test.com',
+      role: '1',
+      password: 'hahaha',
     }, 'Updated user name');
   };
 
@@ -58,9 +68,7 @@ test('run', async t => {
     },
   }, assertPatch, db);
 
-  const assertDelete = res => {
-    t.is(res, true, 'User was deleted');
-  };
+  const assertDelete = res => t.is(res.body.deleted, true, 'User was deleted');
 
   await run({
     params: {
@@ -78,9 +86,7 @@ test('run', async t => {
     },
   }, assertDelete, db);
 
-  const assertInvalidMethod = res => t.falsy(res, 'Should have proper method');
-
-  await run({
+  const invalidToken = await run({
     params: {
       table: 'user',
       id: '600',
@@ -91,9 +97,28 @@ test('run', async t => {
         name: 'Battery',
       },
     },
-  }, assertInvalidMethod, db);
+    response: {
+      status: '',
+    },
+  });
+
+  t.is(invalidToken.status, 405, 'Method not allowed');
+
+  const invalidBody = await run({
+    params: {
+      table: 'user',
+    },
+    request: {
+      method: 'POST',
+    },
+    response: {
+      status: '',
+    },
+  });
+
+  t.is(invalidBody.status, 400, 'Body not defined');
 });
 
-test.after('teardown', async () => {
-  await db().disconnect();
+test.after('Write: Teardown database', async () => {
+  await db().stop();
 });

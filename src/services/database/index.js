@@ -1,6 +1,7 @@
 import r from 'rethinkdb';
 import sanitizeRequest from './sanitizeRequest';
 import getFieldsToMerge from './getFieldsToMerge';
+import { UnprocessableEntity } from 'http-errors';
 
 export default class Database {
   constructor(schemas = {}, { name = '', host = '' }) {
@@ -13,10 +14,10 @@ export default class Database {
     const { host, name } = this;
 
     return new Promise((resolve, reject) => {
-      r.connect({ host, name }).then(conn => {
+      r.connect({ host, db: name }).then(conn => {
         this.conn = conn;
         return resolve(conn);
-      }).catch(reject);
+      }).catch(() => reject(new UnprocessableEntity()));
     });
   }
 
@@ -61,7 +62,7 @@ export default class Database {
         .run(conn)
         .then(fetch)
         .then(resolve)
-        .catch(reject);
+        .catch(() => reject(new UnprocessableEntity()));
     });
   }
 
@@ -99,7 +100,7 @@ export default class Database {
         .run(conn)
         .then(fetch)
         .then(resolve)
-        .catch(reject);
+        .catch(() => reject(new UnprocessableEntity()));
     });
   }
 
@@ -121,7 +122,13 @@ export default class Database {
     id = `${id}`;
     const { conn } = this;
     const table = r.table(type);
-    const didSucceed = ({ deleted }) => deleted === 1;
+    const didSucceed = ({ deleted }) => {
+      const result = deleted === 1
+        ? { deleted: true, id }
+        : { deleted: false };
+
+      return result;
+    };
 
     return new Promise((resolve, reject) => {
       table
@@ -130,7 +137,7 @@ export default class Database {
         .run(conn)
         .then(didSucceed)
         .then(resolve)
-        .catch(reject);
+        .catch(() => reject(new UnprocessableEntity()));
     });
   }
 
@@ -157,7 +164,7 @@ export default class Database {
         .run(conn)
         .then(didSucceed)
         .then(resolve)
-        .catch(reject);
+        .catch(() => reject(new UnprocessableEntity()));
     });
   }
 
@@ -189,7 +196,7 @@ export default class Database {
         .orderBy('id')
         .run(conn)
         .then(resolve)
-        .catch(reject);
+        .catch(() => reject(new UnprocessableEntity()));
     });
   }
 
@@ -219,7 +226,7 @@ export default class Database {
         .merge(fieldsToMerge)
         .run(conn)
         .then(resolve)
-        .catch(reject);
+        .catch(() => reject(new UnprocessableEntity()));
     });
   }
 
@@ -270,7 +277,7 @@ export default class Database {
         .merge(fieldsToMerge)
         .run(conn)
         .then(resolve)
-        .catch(reject);
+        .catch(() => reject(new UnprocessableEntity()));
     });
   }
 }

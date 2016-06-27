@@ -1,13 +1,13 @@
 import test from 'ava';
 import image from '../../../src/middleware/image';
 
-test('image', async t => {
+test('Image: Post, patch, and delete', async t => {
   let publicId;
 
   const assertPost = res => {
-    t.truthy(res.image.img, 'secure_url key is present');
-    t.truthy(res.image.publicId, 'publicId key is present');
-    publicId = res.image.publicId;
+    t.truthy(res.body.image.img, 'secure_url key is present');
+    t.truthy(res.body.image.publicId, 'publicId key is present');
+    publicId = res.body.image.publicId;
   };
 
   await image({
@@ -30,8 +30,8 @@ test('image', async t => {
   }, assertPost);
 
   const assertPatch = res => {
-    t.truthy(res.image.img, 'secure_url key is present');
-    t.is(res.image.publicId, publicId, 'publicId key is the same');
+    t.truthy(res.body.image.img, 'secure_url key is present');
+    t.is(res.body.image.publicId, publicId, 'publicId key is the same');
   };
 
   await image({
@@ -54,7 +54,7 @@ test('image', async t => {
     },
   }, assertPatch);
 
-  const assertDelete = res => t.is(res, 'ok', 'image was deleted');
+  const assertDelete = res => t.is(res.body.result, 'ok', 'image was deleted');
 
   await image({
     params: {

@@ -11,19 +11,32 @@ const index = client.initIndex('webcom');
  * @return {Function}
  */
 export default (ctx, next) => {
-  const { request } = ctx;
+  const { request, response } = ctx;
   const { body, method } = request;
   let dispatch;
 
+  const handleError = () => {
+    response.status = 424;
+    return response;
+  };
+
+  if (!body.id) return handleError();
+
   switch (method) {
     case 'POST':
-      dispatch = index.addObject({ ...body, objectID: body.id });
+      dispatch = index
+        .addObject({ ...body, objectID: body.id })
+        .catch(handleError);
       break;
     case 'PATCH':
-      dispatch = index.partialUpdateObject({ ...body, objectID: body.id });
+      dispatch = index
+        .partialUpdateObject({ ...body, objectID: body.id })
+        .catch(handleError);
       break;
     case 'DELETE':
-      dispatch = index.deleteObject(body.id);
+      dispatch = index
+        .deleteObject(`${body.id}`)
+        .catch(handleError);
       break;
     default:
       return next();

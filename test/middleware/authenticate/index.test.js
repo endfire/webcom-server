@@ -2,22 +2,21 @@ import test from 'ava';
 import { run } from '../../../src/middleware/authenticate';
 import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
-import { Unauthorized, MethodNotAllowed, BadRequest, NotAcceptable } from 'http-errors';
 
 let token;
 
-test.before('connect', async t => {
+test.before('Authenticate: Connect to database', async t => {
   await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
-  t.truthy(db().conn, 'connection is present');
+  t.truthy(db().instance().conn, 'connection is present');
 
-  const table = await db().clearTable(process.env.AUTHENTICATE_TABLE);
+  const table = await db().instance().clearTable(process.env.AUTHENTICATE_TABLE);
 
   t.is(table, true, 'table (dummy) successfully cleared');
 });
 
-test('Cannot find user', async t => {
+test('Authenticate: Cannot find user', async t => {
   const assertCannotFindUser = res => (
-    t.truthy(res instanceof BadRequest, 'Could not find user.')
+    t.is(res.status, 404, 'Could not find user.')
   );
 
   await run({
@@ -38,9 +37,9 @@ test('Cannot find user', async t => {
   }, assertCannotFindUser, db);
 });
 
-test('invalid method', async t => {
+test('Authenticate: Invalid method', async t => {
   const assertInvalidMethod = res => (
-    t.truthy(res instanceof MethodNotAllowed, 'Invalid method.')
+    t.is(res.status, 405, 'Invalid method.')
   );
 
   await run({
@@ -53,9 +52,9 @@ test('invalid method', async t => {
   }, assertInvalidMethod, db);
 });
 
-test('invalid path', async t => {
+test('Authenticate: Invalid path', async t => {
   const assertInvalidPath = res => (
-    t.truthy(res instanceof BadRequest, 'Invalid path.')
+    t.is(res.status, 400, 'Invalid path.')
   );
 
   await run({
@@ -69,7 +68,7 @@ test('invalid path', async t => {
   }, assertInvalidPath, db);
 });
 
-test('authenticate process', async t => {
+test('Authenticate: Signup, return and login', async t => {
   const noSignupPassword = await run({
     request: {
       path: '/auth/signup',
@@ -87,7 +86,7 @@ test('authenticate process', async t => {
     },
   });
 
-  t.truthy(noSignupPassword instanceof NotAcceptable, 'User signup plaintext password is empty.');
+  t.is(noSignupPassword.status, 406, 'User signup plaintext password is empty.');
 
   const assertSignup = res => {
     t.not(res.body.token, '');
@@ -111,7 +110,7 @@ test('authenticate process', async t => {
     },
   }, assertSignup, db);
 
-  const assertVerify = res => t.is(res, 202);
+  const assertVerify = res => t.is(res.status, 202);
 
   await run({
     request: {
@@ -145,7 +144,7 @@ test('authenticate process', async t => {
     },
   });
 
-  t.truthy(invalidToken instanceof Unauthorized, 'Token is invalid, user is unauthorized.');
+  t.is(invalidToken.status, 401, 'Token is invalid, user is unauthorized.');
 
   const assertToken = res => t.not(res.body.token, '');
 
@@ -167,7 +166,7 @@ test('authenticate process', async t => {
   }, assertToken, db);
 
   const emptyPassword = res => (
-    t.truthy(res instanceof NotAcceptable, 'User plaintext password is empty.')
+    t.is(res.status, 406, 'User plaintext password is empty.')
   );
 
   await run({
@@ -188,7 +187,7 @@ test('authenticate process', async t => {
   }, emptyPassword, db);
 
   const wrongPassword = res => (
-    t.truthy(res instanceof NotAcceptable, 'User plaintext password is incorrect.')
+    t.is(res.status, 406, 'User plaintext password is incorrect.')
   );
 
   await run({
@@ -209,6 +208,6 @@ test('authenticate process', async t => {
   }, wrongPassword, db);
 });
 
-test.after.always('teardown', async () => {
-  await db().disconnect();
+test.after.always('Authenticate: Teardown database', async () => {
+  await db().stop();
 });

@@ -13,7 +13,7 @@ export default (plaintextPassword, hashedPassword) => {
 
   return new Promise((resolve, reject) => {
     bcrypt.compare(plaintextPassword, hashedPassword, (err, res) => (
-      err ? reject(err) : resolve(res)
+      err ? reject(new NotAcceptable()) : resolve(res)
     ));
   });
 };

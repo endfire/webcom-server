@@ -4,39 +4,47 @@ import { run } from '../../../src/middleware/read';
 import { db } from '../../../src/services';
 import { schemas } from '../../fixtures';
 
-test.before('connect', async t => {
+test.before('Read: Connect to database', async t => {
   await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
-  t.truthy(db().conn, 'connection is present');
+  t.truthy(db().instance().conn, 'connection is present');
 
-  const table = await db().clearTable('person');
+  const table = await db().instance().clearTable('person');
 
   t.is(table, true, 'person table successfully cleared');
 
-  await db().create('person', {
+  await db().instance().create('person', {
     id: '123',
     name: 'Fresh',
     email: 'fresh@gmail.com',
+    phone: '1234',
+    job: 'Janitor',
   });
 
-  await db().create('person', {
+  await db().instance().create('person', {
     id: '124',
     name: 'Doug',
     email: 'doug@gmail.com',
+    phone: '1234',
+    job: 'Janitor',
   });
 });
 
-test('find a record', async t => {
+test('Read: Find a record', async t => {
   const assertFind = res => {
-    t.deepEqual(res, [
+    t.deepEqual(res.body, [
       {
         id: '123',
         name: 'Fresh',
         email: 'fresh@gmail.com',
+        phone: '1234',
+        job: 'Janitor',
       },
       {
         id: '124',
         name: 'Doug',
         email: 'doug@gmail.com',
+        phone: '1234',
+        job: 'Janitor',
       },
     ], 'Found the correct person record');
   };
@@ -55,12 +63,14 @@ test('find a record', async t => {
   }, assertFind, db);
 });
 
-test('fetch a record', async t => {
+test('Read: Fetch a record', async t => {
   const assertFetch = res => {
-    t.deepEqual(res, {
+    t.deepEqual(res.body, {
       id: '123',
       name: 'Fresh',
       email: 'fresh@gmail.com',
+      phone: '1234',
+      job: 'Janitor',
     }, 'Fetched the correct person record');
   };
 
@@ -78,7 +88,7 @@ test('fetch a record', async t => {
   }, assertFetch, db);
 });
 
-test('invalid method', async t => {
+test('Read: Invalid method', async t => {
   const assertInvalidMethod = res => t.falsy(res, 'Did not use proper method, GET');
 
   await run({
@@ -92,6 +102,20 @@ test('invalid method', async t => {
   }, assertInvalidMethod, db);
 });
 
-test.after.always('teardown', async () => {
-  await db().disconnect();
+test('Read: Invalid params', async t => {
+  const assertInvalidMethod = res => t.falsy(res, 'Did not use proper method, GET');
+
+  await run({
+    request: {
+      method: 'GET',
+    },
+    params: {},
+    response: {
+      body: {},
+    },
+  }, assertInvalidMethod, db);
+});
+
+test.after.always('Read: Teardown database', async () => {
+  await db().stop();
 });

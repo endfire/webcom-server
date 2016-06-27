@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import verify from '../utils/verifyToken';
-import { Unauthorized } from 'http-errors';
 
 /**
  * Authorize middleware to verify API calls.
@@ -16,11 +15,14 @@ export default (ctx, next) => {
 
   const handleSuccess = () => {
     response.status = 202;
-    return response.status;
+    return response;
   };
 
   return verify(authorization)
     .then(handleSuccess)
     .then(next)
-    .catch(Unauthorized);
+    .catch(err => {
+      response.status = err.status;
+      return response;
+    });
 };

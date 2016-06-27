@@ -1,24 +1,46 @@
 /* eslint-disable no-param-reassign */
 import { db } from '../../services';
+import { MethodNotAllowed, BadRequest } from 'http-errors';
 
 export const run = (ctx, next, database) => {
   const { params, request, response } = ctx;
   const { table, id } = params;
-  const { body, method } = request;
+  const { method } = request;
   let dispatch;
+
+  const handleSuccess = result => {
+    request.body = result;
+    return request;
+  };
+
+  const handleError = err => {
+    response.status = err.status;
+    return response;
+  };
+
+  if (!request.body) return handleError(new BadRequest());
 
   switch (method) {
     case 'POST':
-      dispatch = database().create(table, body).then(record => (response.body = record));
+      dispatch = database().instance()
+        .create(table, request.body)
+        .then(handleSuccess)
+        .catch(handleError);
       break;
     case 'PATCH':
-      dispatch = database().update(table, id, body).then(record => (response.body = record));
+      dispatch = database().instance()
+        .update(table, id, request.body)
+        .then(handleSuccess)
+        .catch(handleError);
       break;
     case 'DELETE':
-      dispatch = database().delete(table, id).then(status => (response.body = status));
+      dispatch = database().instance()
+        .delete(table, id)
+        .then(handleSuccess)
+        .catch(handleError);
       break;
     default:
-      return next();
+      return handleError(new MethodNotAllowed());
   }
 
   return dispatch.then(next);

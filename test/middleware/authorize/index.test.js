@@ -1,9 +1,8 @@
 import test from 'ava';
 import jwt from 'jsonwebtoken';
 import authorize from '../../../src/middleware/authorize';
-import { Unauthorized } from 'http-errors';
 
-test('authorize', async t => {
+test('Authorize: API call', async t => {
   const token = jwt.sign({ password: 'test' }, process.env.JWT_KEY);
 
   const missingKey = await authorize({
@@ -12,12 +11,14 @@ test('authorize', async t => {
         wrongkey: token,
       },
     },
-    response: {},
+    response: {
+      status: '',
+    },
   });
 
-  t.truthy(missingKey instanceof Unauthorized, 'its an unauthorized error');
+  t.is(missingKey.status, 400, 'Authoriation header missing');
 
-  const assertCall = res => t.is(res, 202, 'request authorized');
+  const assertCall = res => t.is(res.status, 202, 'request authorized');
 
   await authorize({
     request: {
@@ -25,7 +26,9 @@ test('authorize', async t => {
         authorization: token,
       },
     },
-    response: {},
+    response: {
+      status: '',
+    },
   }, assertCall);
 
   const invalidToken = await authorize({
@@ -34,8 +37,10 @@ test('authorize', async t => {
         authorization: 'invalid-token',
       },
     },
-    response: {},
+    response: {
+      status: '',
+    },
   });
 
-  t.truthy(invalidToken instanceof Unauthorized, 'its an unauthorized error');
+  t.is(invalidToken.status, 401, 'Inpropper token');
 });

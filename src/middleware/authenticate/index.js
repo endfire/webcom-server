@@ -6,7 +6,7 @@ import bcryptCompare from '../utils/bcryptCompare';
 import createUser from './createUser';
 import findUser from './findUser';
 import { db } from '../../services';
-import { Unauthorized, MethodNotAllowed, BadRequest, NotAcceptable } from 'http-errors';
+import { MethodNotAllowed, BadRequest, NotAcceptable } from 'http-errors';
 
 export const run = (ctx, next, database) => {
   const { request, response } = ctx;
@@ -16,13 +16,13 @@ export const run = (ctx, next, database) => {
   if (method !== 'POST') return new MethodNotAllowed();
 
   const handleToken = token => {
-    response.body.token = token;
+    response.body = { token };
     return response;
   };
 
   const handleVerify = () => {
     response.status = 202;
-    return response.status;
+    return response;
   };
 
   const handleHash = hashedPassword => {
@@ -39,7 +39,10 @@ export const run = (ctx, next, database) => {
   const retrieveUserId = res => createUser(res, database);
 
   // This is a temporary handler pending `bluebird` filter .catch implementation
-  const handleError = err => err;
+  const handleError = err => {
+    response.status = err.status;
+    return response;
+  };
 
   switch (path) {
     case '/auth/signup':
@@ -53,7 +56,7 @@ export const run = (ctx, next, database) => {
     case '/auth/verify':
       dispatch = verifyToken(request.body.token)
         .then(handleVerify)
-        .catch(Unauthorized);
+        .catch(handleError);
       break;
     case '/auth/token':
       dispatch = findUser({ email: request.body.email }, database)

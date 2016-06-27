@@ -1,7 +1,7 @@
 import test from 'ava';
 import algolia from '../../../src/middleware/algolia';
 
-test('algolia', async t => {
+test('Algolia: Post, patch, and delete', async t => {
   const assertPost = res => {
     t.truthy(res.createdAt, 'createdAt key is present');
     t.is(+res.objectID, 1, 'created object has correct id');
@@ -37,7 +37,7 @@ test('algolia', async t => {
 
   const assertDelete = res => {
     t.truthy(res.deletedAt, 'deletedAt key is presrent');
-    t.is(+res.objectID, 1, 'updated object has correct id');
+    t.is(+res.objectID, 1, 'deleted object has correct id');
   };
 
   await algolia({
@@ -52,6 +52,23 @@ test('algolia', async t => {
   await algolia({
     request: {
       method: 'invalid-method',
+      body: {
+        id: 1,
+      },
     },
   }, assertInvalidMethod);
+});
+
+test('Algolia: Invalid object', async t => {
+  const invalidObject = await algolia({
+    request: {
+      method: 'POST',
+      body: { code: 2000 },
+    },
+    response: {
+      status: '',
+    },
+  });
+
+  t.is(invalidObject.status, 424, 'Invalid object');
 });

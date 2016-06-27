@@ -3,12 +3,12 @@ import test from 'ava';
 import getFieldsToMerge from '../../../src/services/database/getFieldsToMerge';
 import { schemas } from '../../fixtures';
 
-const userTable = 'user';
+const userTable = 'individual';
 const animalTable = 'animal';
 const companyTable = 'company';
 let conn;
 
-test.before('connect', async t => {
+test.before('Merge: Connect to database', async t => {
   try {
     conn = await r.connect({
       host: process.env.RETHINKDB_URL,
@@ -21,7 +21,7 @@ test.before('connect', async t => {
   }
 });
 
-test('mergeRelationships with complete relationships', async t => {
+test('Merge: Merge relationships with complete relationships', async t => {
   await r.table(userTable).insert({
     id: '1',
     name: 'Dylan',
@@ -55,9 +55,9 @@ test('mergeRelationships with complete relationships', async t => {
     owner: '1',
   }]).run(conn);
 
-  const merged = await r.table('user')
+  const merged = await r.table('individual')
     .get('1')
-    .merge(getFieldsToMerge(schemas, 'user'))
+    .merge(getFieldsToMerge(schemas, 'individual'))
     .run(conn);
 
   const expected = {
@@ -92,7 +92,7 @@ test('mergeRelationships with complete relationships', async t => {
   t.deepEqual(merged, expected, 'merged object has correct json');
 });
 
-test('mergeRelationships with incomplete relationships', async t => {
+test('Merge: Merge relationships with incomplete relationships', async t => {
   await r.table(userTable).insert({
     id: '2',
     name: 'Bobby',
@@ -106,9 +106,9 @@ test('mergeRelationships with incomplete relationships', async t => {
     employees: [],
   }).run(conn);
 
-  const merged = await r.table('user')
+  const merged = await r.table('individual')
     .get('2')
-    .merge(getFieldsToMerge(schemas, 'user'))
+    .merge(getFieldsToMerge(schemas, 'individual'))
     .run(conn);
 
   const expected = {

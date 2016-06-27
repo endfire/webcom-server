@@ -1,4 +1,4 @@
-import { BadRequest } from 'http-errors';
+import { NotFound } from 'http-errors';
 /**
  * Function to find user in the database based on filter object.
  *
@@ -7,8 +7,9 @@ import { BadRequest } from 'http-errors';
  */
 export default (filter, database) => (
   new Promise((resolve, reject) => {
-    database().find(process.env.AUTHENTICATE_TABLE, filter).then(user => (
-      user[0] ? resolve(user[0]) : reject(new BadRequest())
-    ));
+    database().instance().find(process.env.AUTHENTICATE_TABLE, filter)
+      .then(user => (
+        user[0] ? resolve(user[0]) : reject(new NotFound())
+      ));
   })
 );
