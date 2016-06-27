@@ -19,6 +19,7 @@ export default {
       email: true,
       description: true,
       password: true,
+      meta: true,
     },
     relationships: {
       listings: {
@@ -33,12 +34,12 @@ export default {
     },
   },
   listing: {
+    attributes: {
+      meta: true,
+    },
     relationships: {
       company: {
         belongsTo: 'company',
-      },
-      obg: {
-        belongsTo: 'obg',
       },
       categories: {
         hasMany: 'category',
@@ -53,13 +54,11 @@ export default {
       start: true,
       end: true,
       priority: true,
+      meta: true,
     },
     relationships: {
       company: {
         belongsTo: 'company',
-      },
-      obg: {
-        belongsTo: 'obg',
       },
       categories: {
         hasMany: 'category',
@@ -72,6 +71,7 @@ export default {
       email: true,
       phone: true,
       job: true,
+      meta: true,
     },
     relationships: {
       company: {
@@ -86,30 +86,24 @@ export default {
       background: true,
       text: true,
       secondary: true,
+      meta: true,
     },
     relationships: {
       forms: {
         hasMany: 'form',
       },
+      obg: {
+        hasOne: 'obg',
+      },
     },
   },
   obg: {
+    attributes: {
+      meta: true,
+    },
     relationships: {
       brand: {
         belongsTo: 'brand',
-      },
-      headings: {
-        hasMany: 'heading',
-      },
-    },
-  },
-  heading: {
-    attributes: {
-      name: true,
-    },
-    relationships: {
-      obg: {
-        belongsTo: 'obg',
       },
       categories: {
         hasMany: 'category',
@@ -119,13 +113,12 @@ export default {
   category: {
     attributes: {
       name: true,
+      heading: true,
+      meta: true,
     },
     relationships: {
       obg: {
         belongsTo: 'obg',
-      },
-      heading: {
-        belongsTo: 'heading',
       },
       listings: {
         hasMany: 'listing',
@@ -139,10 +132,28 @@ export default {
     attributes: {
       name: true,
       published: true,
+      meta: true,
     },
     relationships: {
       brand: {
         belongsTo: 'brand',
+      },
+      fields: {
+        hasMany: 'field',
+        embedded: true,
+      },
+      data: {
+        hasMany: 'data',
+      },
+    },
+  },
+  data: {
+    attributes: {
+      meta: true,
+    },
+    relationships: {
+      form: {
+        belongsTo: 'form',
       },
       fields: {
         hasMany: 'field',
@@ -158,14 +169,6 @@ export default {
       type: true,
       value: true,
       priority: true,
-    },
-  },
-  data: {
-    relationships: {
-      fields: {
-        hasMany: 'field',
-        embedded: true,
-      },
     },
   },
 };

@@ -75,20 +75,6 @@ test('Integration: Post and get relationships from api', async t => {
 
   t.is(createOBG.status, 202, 'Created an obg');
 
-  const heading = {
-    name: 'Heading1',
-    obg: obgObject.id,
-  };
-
-  const createHeading = await request(url)
-    .post('/heading')
-    .set('content-type', 'application/json')
-    .set('authorization', token)
-    .send(JSON.stringify(heading))
-    .then(res => res);
-
-  t.is(createHeading.status, 202, 'Got the obg');
-
   const getOBG = await request(url)
     .get(`/obg/${obgObject.id}`)
     .set('content-type', 'application/json')
