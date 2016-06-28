@@ -23,10 +23,13 @@ export default (router, routes) => {
 
     for (const verb of verbs) {
       const middleware = routes[path][verb];
+      const type = typeof middleware;
 
       // if the middleware is valid (i.e. it is a function), then mount it on the router
-      if (typeof middleware === 'function') {
+      if (type === 'function') {
         router[verb](path, middleware);
+      } else if (type === 'object') {
+        router[verb](path, middleware.middleware);
       } else {
         /* eslint-disable no-console */
         console.warn(
