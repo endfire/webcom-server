@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import { db } from '../../services';
+import { create, update, archive } from 'redink';
 import { MethodNotAllowed, BadRequest } from 'http-errors';
 
-export const run = (ctx, next, database) => {
+export const run = (ctx, next) => {
   const { params, request, response } = ctx;
   const { table, id } = params;
   const { method } = request;
@@ -22,20 +22,17 @@ export const run = (ctx, next, database) => {
 
   switch (method) {
     case 'POST':
-      dispatch = database().instance()
-        .create(table, request.body)
+      dispatch = create(table, request.body)
         .then(handleSuccess)
         .catch(handleError);
       break;
     case 'PATCH':
-      dispatch = database().instance()
-        .update(table, id, request.body)
+      dispatch = update(table, id, request.body)
         .then(handleSuccess)
         .catch(handleError);
       break;
     case 'DELETE':
-      dispatch = database().instance()
-        .delete(table, id)
+      dispatch = archive(table, id)
         .then(handleSuccess)
         .catch(handleError);
       break;
@@ -53,4 +50,4 @@ export const run = (ctx, next, database) => {
  * @param {Function} next
  * @return {Function}
  */
-export default (ctx, next) => run(ctx, next, db);
+export default (ctx, next) => run(ctx, next);

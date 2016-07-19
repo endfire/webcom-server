@@ -1,15 +1,23 @@
 import test from 'ava';
 import { run } from '../../../src/middleware/write';
-import { db } from '../../../src/services';
+import redink from 'redink';
+import r from 'rethinkdb';
 import { schemas } from '../../fixtures';
 
 test.before('Write: Connect to database', async t => {
-  await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
-  t.truthy(db().instance().conn, 'connection is present');
+  const options = {
+    host: process.env.RETHINKDB_URL,
+    name: process.env.RETHINKDB_NAME,
+    schemas,
+  };
 
-  const table = await db().instance().clearTable('user');
+  const conn = await redink().start(options);
 
-  t.is(table, true, 'table (dummy) successfully cleared');
+  t.truthy(conn, 'connection is present');
+
+  const table = await r.table('user').delete().run(conn);
+
+  t.truthy(table, 'table (dummy) successfully cleared');
 });
 
 test('Write: Post, patch, and delete', async t => {
@@ -40,7 +48,7 @@ test('Write: Post, patch, and delete', async t => {
     response: {
       body: {},
     },
-  }, assertPost, db);
+  }, assertPost);
 
   const assertPatch = res => {
     t.deepEqual(res.body, {
@@ -66,7 +74,7 @@ test('Write: Post, patch, and delete', async t => {
     response: {
       body: {},
     },
-  }, assertPatch, db);
+  }, assertPatch);
 
   const assertDelete = res => t.is(res.body.deleted, true, 'User was deleted');
 
@@ -84,7 +92,7 @@ test('Write: Post, patch, and delete', async t => {
     response: {
       body: {},
     },
-  }, assertDelete, db);
+  }, assertDelete);
 
   const invalidToken = await run({
     params: {
@@ -120,5 +128,5 @@ test('Write: Post, patch, and delete', async t => {
 });
 
 test.after('Write: Teardown database', async () => {
-  await db().stop();
+  await redink().stop();
 });

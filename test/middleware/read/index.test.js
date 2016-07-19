@@ -1,18 +1,25 @@
 import test from 'ava';
 import r from 'rethinkdb';
 import { run } from '../../../src/middleware/read';
-import { db } from '../../../src/services';
+import redink, { create } from 'redink';
 import { schemas } from '../../fixtures';
 
 test.before('Read: Connect to database', async t => {
-  await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
-  t.truthy(db().instance().conn, 'connection is present');
+  const options = {
+    host: process.env.RETHINKDB_URL,
+    name: process.env.RETHINKDB_NAME,
+    schemas,
+  };
 
-  const table = await db().instance().clearTable('person');
+  const conn = await redink().start(options);
 
-  t.is(table, true, 'person table successfully cleared');
+  t.truthy(conn, 'connection is present');
 
-  await db().instance().create('person', {
+  const table = await r.table('person').delete().run(conn);
+
+  t.truthy(table, 'table (dummy) successfully cleared');
+
+  await create('person', {
     id: '123',
     name: 'Fresh',
     email: 'fresh@gmail.com',
@@ -20,7 +27,7 @@ test.before('Read: Connect to database', async t => {
     job: 'Janitor',
   });
 
-  await db().instance().create('person', {
+  await create('person', {
     id: '124',
     name: 'Doug',
     email: 'doug@gmail.com',
@@ -38,6 +45,9 @@ test('Read: Find a record', async t => {
         email: 'fresh@gmail.com',
         phone: '1234',
         job: 'Janitor',
+        meta: {
+          archived: false,
+        },
       },
       {
         id: '124',
@@ -45,6 +55,9 @@ test('Read: Find a record', async t => {
         email: 'doug@gmail.com',
         phone: '1234',
         job: 'Janitor',
+        meta: {
+          archived: false,
+        },
       },
     ], 'Found the correct person record');
   };
@@ -60,7 +73,7 @@ test('Read: Find a record', async t => {
     response: {
       body: {},
     },
-  }, assertFind, db);
+  }, assertFind);
 });
 
 test('Read: Fetch a record', async t => {
@@ -71,6 +84,9 @@ test('Read: Fetch a record', async t => {
       email: 'fresh@gmail.com',
       phone: '1234',
       job: 'Janitor',
+      meta: {
+        archived: false,
+      },
     }, 'Fetched the correct person record');
   };
 
@@ -85,7 +101,7 @@ test('Read: Fetch a record', async t => {
     response: {
       body: {},
     },
-  }, assertFetch, db);
+  }, assertFetch);
 });
 
 test('Read: Invalid method', async t => {
@@ -99,7 +115,7 @@ test('Read: Invalid method', async t => {
     response: {
       body: {},
     },
-  }, assertInvalidMethod, db);
+  }, assertInvalidMethod);
 });
 
 test('Read: Invalid params', async t => {
@@ -113,9 +129,9 @@ test('Read: Invalid params', async t => {
     response: {
       body: {},
     },
-  }, assertInvalidMethod, db);
+  }, assertInvalidMethod);
 });
 
 test.after.always('Read: Teardown database', async () => {
-  await db().stop();
+  await redink().stop();
 });

@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import Router from 'koa-router';
+import redink from 'redink';
 import routes from './routes';
 import schemas from './schemas';
 import application from './application';
@@ -13,6 +14,8 @@ const {
 const app = new Koa();
 const router = new Router();
 
+const db = redink();
+
 const options = {
   app,
   router,
@@ -23,4 +26,4 @@ const options = {
   port,
 };
 
-application(options).start();
+application(options, db).start();

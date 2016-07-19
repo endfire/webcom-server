@@ -5,6 +5,7 @@ export default {
       email: true,
       password: true,
       role: true,
+      meta: true,
     },
   },
   company: {
@@ -24,12 +25,15 @@ export default {
     relationships: {
       listings: {
         hasMany: 'listing',
+        inverse: 'company',
       },
       ads: {
         hasMany: 'ad',
+        inverse: 'company',
       },
       people: {
         hasMany: 'person',
+        inverse: 'company',
       },
     },
   },
@@ -40,9 +44,11 @@ export default {
     relationships: {
       company: {
         belongsTo: 'company',
+        inverse: 'listings',
       },
       categories: {
         hasMany: 'category',
+        inverse: 'listings',
       },
     },
   },
@@ -59,9 +65,11 @@ export default {
     relationships: {
       company: {
         belongsTo: 'company',
+        inverse: 'ads',
       },
       categories: {
         hasMany: 'category',
+        inverse: 'ads',
       },
     },
   },
@@ -76,6 +84,7 @@ export default {
     relationships: {
       company: {
         belongsTo: 'company',
+        inverse: 'people',
       },
     },
   },
@@ -91,9 +100,11 @@ export default {
     relationships: {
       forms: {
         hasMany: 'form',
+        inverse: 'brand',
       },
       obg: {
         hasOne: 'obg',
+        inverse: 'brand',
       },
     },
   },
@@ -104,9 +115,11 @@ export default {
     relationships: {
       brand: {
         belongsTo: 'brand',
+        inverse: 'obg',
       },
       categories: {
         hasMany: 'category',
+        inverse: 'obg',
       },
     },
   },
@@ -119,12 +132,15 @@ export default {
     relationships: {
       obg: {
         belongsTo: 'obg',
+        inverse: 'categories',
       },
       listings: {
         hasMany: 'listing',
+        inverse: 'categories',
       },
       ads: {
         hasMany: 'ad',
+        inverse: 'categories',
       },
     },
   },
@@ -137,23 +153,26 @@ export default {
     relationships: {
       brand: {
         belongsTo: 'brand',
+        inverse: 'forms',
       },
       fields: {
         hasMany: 'field',
         embedded: true,
       },
-      data: {
-        hasMany: 'data',
+      submissions: {
+        hasMany: 'submission',
+        inverse: 'form',
       },
     },
   },
-  data: {
+  submission: {
     attributes: {
       meta: true,
     },
     relationships: {
       form: {
         belongsTo: 'form',
+        inverse: 'submissions',
       },
       fields: {
         hasMany: 'field',

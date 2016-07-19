@@ -1,17 +1,25 @@
 import test from 'ava';
 import { run } from '../../../src/middleware/authenticate';
-import { db } from '../../../src/services';
+import redink from 'redink';
+import r from 'rethinkdb';
 import { schemas } from '../../fixtures';
 
 let token;
 
 test.before('Authenticate: Connect to database', async t => {
-  await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
-  t.truthy(db().instance().conn, 'connection is present');
+  const options = {
+    host: process.env.RETHINKDB_URL,
+    name: process.env.RETHINKDB_NAME,
+    schemas,
+  };
 
-  const table = await db().instance().clearTable(process.env.AUTHENTICATE_TABLE);
+  const conn = await redink().start(options);
 
-  t.is(table, true, 'table (dummy) successfully cleared');
+  t.truthy(conn, 'connection is present');
+
+  const table = await r.table(process.env.AUTHENTICATE_TABLE).delete().run(conn);
+
+  t.truthy(table, 'table (dummy) successfully cleared');
 });
 
 test('Authenticate: Cannot find user', async t => {
@@ -34,7 +42,7 @@ test('Authenticate: Cannot find user', async t => {
         token: '',
       },
     },
-  }, assertCannotFindUser, db);
+  }, assertCannotFindUser);
 });
 
 test('Authenticate: Invalid method', async t => {
@@ -49,7 +57,7 @@ test('Authenticate: Invalid method', async t => {
     response: {
       status: '',
     },
-  }, assertInvalidMethod, db);
+  }, assertInvalidMethod);
 });
 
 test('Authenticate: Invalid path', async t => {
@@ -65,7 +73,7 @@ test('Authenticate: Invalid path', async t => {
     response: {
       status: '',
     },
-  }, assertInvalidPath, db);
+  }, assertInvalidPath);
 });
 
 test('Authenticate: Signup, return and login', async t => {
@@ -108,7 +116,7 @@ test('Authenticate: Signup, return and login', async t => {
         token: '',
       },
     },
-  }, assertSignup, db);
+  }, assertSignup);
 
   const assertVerify = res => t.is(res.status, 202);
 
@@ -126,7 +134,7 @@ test('Authenticate: Signup, return and login', async t => {
         token: '',
       },
     },
-  }, assertVerify, db);
+  }, assertVerify);
 
   const invalidToken = await run({
     request: {
@@ -163,7 +171,7 @@ test('Authenticate: Signup, return and login', async t => {
         token: '',
       },
     },
-  }, assertToken, db);
+  }, assertToken);
 
   const emptyPassword = res => (
     t.is(res.status, 406, 'User plaintext password is empty.')
@@ -184,7 +192,7 @@ test('Authenticate: Signup, return and login', async t => {
         token: '',
       },
     },
-  }, emptyPassword, db);
+  }, emptyPassword);
 
   const wrongPassword = res => (
     t.is(res.status, 406, 'User plaintext password is incorrect.')
@@ -205,9 +213,9 @@ test('Authenticate: Signup, return and login', async t => {
         token: '',
       },
     },
-  }, wrongPassword, db);
+  }, wrongPassword);
 });
 
 test.after.always('Authenticate: Teardown database', async () => {
-  await db().stop();
+  await redink().stop();
 });

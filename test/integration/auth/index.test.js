@@ -1,20 +1,28 @@
 import test from 'ava';
 import request from 'supertest-as-promised';
-import { db } from '../../../src/services';
+import redink from 'redink';
+import r from 'rethinkdb';
 import schemas from '../../../src/schemas';
 
 const url = process.env.AUTH_URL;
 let token;
 
 test.before('Integration: Signup to authenticate', async t => {
-  await db(schemas, process.env.RETHINKDB_URL, process.env.RETHINKDB_NAME).start();
-  t.truthy(db().instance().conn, 'connection is present');
+  const options = {
+    host: process.env.RETHINKDB_URL,
+    name: process.env.RETHINKDB_NAME,
+    schemas,
+  };
 
-  const table = await db().instance().clearTable(process.env.AUTHENTICATE_TABLE);
+  const conn = await redink().start(options);
 
-  t.is(table, true, 'person table successfully cleared');
+  t.truthy(conn, 'connection is present');
 
-  await db().stop();
+  const table = await r.table(process.env.AUTHENTICATE_TABLE).delete().run(conn);
+
+  t.truthy(table, 'table (dummy) successfully cleared');
+
+  await redink().stop();
 
   const signup = await request(url)
     .post('/signup')

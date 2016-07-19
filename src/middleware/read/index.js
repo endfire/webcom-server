@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import { db } from '../../services';
+import { fetch, find } from 'redink';
 import { BadRequest } from 'http-errors';
 
-export const run = (ctx, next, database) => {
+export const run = (ctx, next) => {
   const { params, request: { method }, request, response } = ctx;
   const { table, id, filter } = params;
 
@@ -21,12 +21,10 @@ export const run = (ctx, next, database) => {
   if (!id && !filter) return handleError(new BadRequest());
 
   const dispatch = id
-    ? database().instance()
-      .fetch(table, id)
+    ? fetch(table, id)
       .then(handleResponse)
       .catch(handleError)
-    : database().instance()
-      .find(table, filter)
+    : find(table, filter)
       .then(handleResponse)
       .catch(handleError);
 
@@ -40,4 +38,4 @@ export const run = (ctx, next, database) => {
  * @param {Function} next
  * @return {Function}
  */
-export default (ctx, next) => run(ctx, next, db);
+export default (ctx, next) => run(ctx, next);

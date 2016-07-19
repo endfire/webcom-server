@@ -5,10 +5,9 @@ import bcryptHash from '../utils/bcryptHash';
 import bcryptCompare from '../utils/bcryptCompare';
 import createUser from './createUser';
 import findUser from './findUser';
-import { db } from '../../services';
 import { MethodNotAllowed, BadRequest, NotAcceptable } from 'http-errors';
 
-export const run = (ctx, next, database) => {
+export const run = (ctx, next) => {
   const { request, response } = ctx;
   const { method, path } = request;
   let dispatch;
@@ -36,7 +35,7 @@ export const run = (ctx, next, database) => {
       throw new NotAcceptable();
     });
 
-  const retrieveUserId = res => createUser(res, database);
+  const retrieveUserId = res => createUser(res);
 
   // This is a temporary handler pending `bluebird` filter .catch implementation
   const handleError = err => {
@@ -59,7 +58,7 @@ export const run = (ctx, next, database) => {
         .catch(handleError);
       break;
     case '/auth/token':
-      dispatch = findUser({ email: request.body.email }, database)
+      dispatch = findUser({ email: request.body.email })
         .then(handleUser)
         .then(createToken)
         .then(handleToken)
@@ -79,4 +78,4 @@ export const run = (ctx, next, database) => {
  * @param  {Function} next
  * @return {Function}
  */
-export default (ctx, next) => run(ctx, next, db);
+export default (ctx, next) => run(ctx, next);

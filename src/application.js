@@ -1,13 +1,11 @@
 /* eslint-disable no-console */
 import { configureRoutes } from './utils';
 import bodyParser from 'koa-bodyparser';
-import { db } from './services';
 import createError from 'http-errors';
 
-export default (options) => {
+export default (options, db) => {
   const { app, router, routes, schemas, host, name, port } = options;
   let server;
-  console.log(name);
 
   return {
     start() {
@@ -20,8 +18,13 @@ export default (options) => {
         server = app.listen(port, () => {
           console.log(`Server started on port ${port}.`);
 
-          db(schemas, host, name)
-            .start()
+          const redinkOptions = {
+            schemas,
+            host,
+            name,
+          };
+
+          db.start(redinkOptions)
             .then(resolve)
             .catch(reject(createError(503, 'Cannot initialize the database.')));
         });
@@ -29,7 +32,7 @@ export default (options) => {
     },
 
     stop() {
-      db().stop().then(server.close);
+      db.stop().then(server.close);
     },
   };
 };
