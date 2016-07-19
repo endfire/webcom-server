@@ -1,22 +1,14 @@
 /* eslint-disable no-console */
-import { configureRoutes } from './utils';
-import bodyParser from 'koa-bodyparser';
 import createError from 'http-errors';
 
 export default (options, db) => {
-  const { app, router, routes, schemas, host, name, port } = options;
-  let server;
+  const { server, schemas, host, name, port } = options;
 
   return {
     start() {
-      app.use(bodyParser());
-
-      configureRoutes(router, routes);
-      app.use(router.routes());
-
       return new Promise((resolve, reject) => {
-        server = app.listen(port, () => {
-          console.log(`Server started on port ${port}.`);
+        server.listen(port).then(message => {
+          console.log(message);
 
           const redinkOptions = {
             schemas,
@@ -32,7 +24,7 @@ export default (options, db) => {
     },
 
     stop() {
-      db.stop().then(server.close);
+      db.stop().then(server.stop());
     },
   };
 };

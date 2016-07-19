@@ -1,9 +1,9 @@
-import Koa from 'koa';
-import Router from 'koa-router';
 import redink from 'redink';
-import routes from './routes';
+import Server from 'redink-server';
 import schemas from './schemas';
 import application from './application';
+
+import { writeMiddleware, readMiddleware, authenticateMiddleware } from './middleware';
 
 const {
   RETHINKDB_URL: host,
@@ -11,15 +11,11 @@ const {
   PORT: port = 3000,
 } = process.env;
 
-const app = new Koa();
-const router = new Router();
-
 const db = redink();
+const server = new Server(writeMiddleware, readMiddleware, authenticateMiddleware);
 
 const options = {
-  app,
-  router,
-  routes,
+  server,
   host,
   name,
   schemas,
