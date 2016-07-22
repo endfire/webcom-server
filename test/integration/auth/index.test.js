@@ -49,15 +49,17 @@ test('Integration: Returning user', async t => {
 });
 
 test('Integration: Login with wrong password', async t => {
-  const passwordError = await request(url)
-    .post('/token')
-    .set('content-type', 'application/json')
-    .send(JSON.stringify({
-      email: 'cj@auth.com',
-      password: 'Wrong password',
-    }));
-
-  t.is(passwordError.status, 406, 'Wrong password.');
+  try {
+    await request(url)
+      .post('/token')
+      .set('content-type', 'application/json')
+      .send(JSON.stringify({
+        email: 'cj@auth.com',
+        password: 'Wrong password',
+      }));
+  } catch (e) {
+    t.is(e.message, 'Error in authenticate middleware: User not authenticated.', 'Not auth');
+  }
 });
 
 test('Integration: Login with correct credentials', async t => {

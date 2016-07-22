@@ -1,12 +1,11 @@
 /* eslint-disable no-param-reassign */
-import algolia from './algolia';
-import authenticate from './authenticate';
-import authorize from './authorize';
+import algolia from 'redink-middleware-algolia';
+import authenticate from 'redink-middleware-authenticate';
+import authorize from 'redink-middleware-authorize';
 import image from './image';
-import read from './read';
-import write from './write';
-import finish from './return';
+import read from 'redink-middleware-read';
+import write from 'redink-middleware-write';
 
-export const writeMiddleware = [authorize, image, write, algolia, finish];
-export const readMiddleware = [authorize, read, finish];
+export const writeMiddleware = [authorize, image, write, algolia];
+export const readMiddleware = [authorize, read];
 export const authenticateMiddleware = [authenticate];
