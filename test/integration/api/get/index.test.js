@@ -29,6 +29,7 @@ test.before('Integration: Signup to authorize', async t => {
   const signup = await request(auth)
     .post('/signup')
     .set('content-type', 'application/json')
+    .set('auth-table', 'user')
     .send(JSON.stringify({
       name: 'CJ',
       role: '1',
@@ -42,13 +43,10 @@ test.before('Integration: Signup to authorize', async t => {
 });
 
 test('Integration: Post and get relationships from api', async t => {
-  let brandObject;
-  let obgObject;
-
   const brand = {
     name: 'Get brand',
     image: {
-      img: 'https://directly.io/assets/images/hero1-65bccd28f7d2fac7bd171314f901304c.jpg',
+      img: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
     },
     background: '#FFF',
     text: '#333',
@@ -59,39 +57,7 @@ test('Integration: Post and get relationships from api', async t => {
     .post('/brand')
     .set('content-type', 'application/json')
     .set('authorization', token)
-    .send(JSON.stringify(brand))
-    .then(res => {
-      brandObject = res.body;
-      return res;
-    });
+    .send(JSON.stringify(brand));
 
   t.is(createBrand.status, 202, 'Created a brand');
-
-  const obg = {
-    brand: brandObject.id,
-  };
-
-  const createOBG = await request(url)
-    .post('/obg')
-    .set('content-type', 'application/json')
-    .set('authorization', token)
-    .send(JSON.stringify(obg))
-    .then(res => {
-      obgObject = res.body;
-      return res;
-    });
-
-  t.is(createOBG.status, 202, 'Created an obg');
-
-  const getOBG = await request(url)
-    .get(`/obg/${obgObject.id}`)
-    .set('content-type', 'application/json')
-    .set('authorization', token)
-    .send()
-    .then(res => {
-      obgObject = res.body;
-      return res;
-    });
-
-  t.is(getOBG.status, 202, 'Got the obg');
 });

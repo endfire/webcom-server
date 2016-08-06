@@ -22,13 +22,14 @@ test.before('Integration: Signup to authorize', async t => {
 
   const table = await r.table(process.env.AUTHENTICATE_TABLE).delete().run(conn);
 
-  t.truthy(table, 'table (dummy) successfully cleared');
+  t.truthy(table, 'table (user) successfully cleared');
 
   await redink().stop();
 
   const signup = await request(auth)
     .post('/signup')
     .set('content-type', 'application/json')
+    .set('auth-table', 'user')
     .send(JSON.stringify({
       name: 'CJ',
       role: '1',
@@ -47,7 +48,7 @@ test('Integration: Post, patch, and delete from api', async t => {
   const brand = {
     name: 'Test brand',
     image: {
-      img: 'https://directly.io/assets/images/hero1-65bccd28f7d2fac7bd171314f901304c.jpg',
+      img: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
     },
     background: '#FFF',
     text: '#333',
@@ -69,7 +70,7 @@ test('Integration: Post, patch, and delete from api', async t => {
   const newBrand = {
     name: 'New brand',
     image: {
-      img: 'https://directly.io/assets/images/hero2-4add9dccc9b36fe08d4dee2fd94acf7f.jpg',
+      img: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
       publicId: brandObject.image.publicId,
     },
   };
@@ -94,4 +95,14 @@ test('Integration: Post, patch, and delete from api', async t => {
     .then(res => res);
 
   t.is(deleteBrand.status, 202, 'Deleted a brand');
+});
+
+test('Integration: Download file', async t => {
+  const file = await request(url)
+    .post('/download/people')
+    .set('content-type', 'application/json')
+    .set('authorization', token)
+    .send();
+
+  t.deepEqual(file.text, 'Accepted', 'Download file');
 });

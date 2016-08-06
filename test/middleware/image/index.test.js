@@ -23,7 +23,7 @@ test('Image: Post, patch, and delete', async t => {
         id: 12,
         name: 'Antenna',
         image: {
-          img: 'https://directly.io/assets/images/hero2-4add9dccc9b36fe08d4dee2fd94acf7f.jpg',
+          img: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
         },
       },
     },
@@ -47,7 +47,7 @@ test('Image: Post, patch, and delete', async t => {
         id: 12,
         name: 'Antenna',
         image: {
-          img: 'https://directly.io/assets/images/hero1-65bccd28f7d2fac7bd171314f901304c.jpg',
+          img: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
           publicId,
         },
       },
@@ -69,7 +69,7 @@ test('Image: Post, patch, and delete', async t => {
         id: 12,
         name: 'Antenna',
         image: {
-          img: 'https://directly.io/assets/images/hero1-65bccd28f7d2fac7bd171314f901304c.jpg',
+          img: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
           publicId,
         },
       },
@@ -109,7 +109,7 @@ test('Image: Post, patch, and delete', async t => {
         id: 12,
         name: 'Antenna',
         image: {
-          img: 'https://directly.io/assets/images/hero1-65bccd28f7d2fac7bd171314f901304c.jpg',
+          img: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
           publicId,
         },
       },

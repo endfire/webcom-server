@@ -18,7 +18,7 @@ export default (options, db) => {
 
           db.start(redinkOptions)
             .then(resolve)
-            .catch(reject(createError(503, 'Cannot initialize the database.')));
+            .catch(() => reject(createError(503, 'Cannot initialize the database.')));
         });
       });
     },
