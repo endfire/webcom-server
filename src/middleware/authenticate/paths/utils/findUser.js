@@ -1,5 +1,4 @@
 import { find } from 'redink';
-import { USER } from '../../../../constants/entities';
 
 /**
  * Function to find user in the database based on filter object.
@@ -7,7 +6,7 @@ import { USER } from '../../../../constants/entities';
  * @param {Object} filter - RethinkDB filter object (for user).
  * @return {Function}
  */
-export default (filter) => {
+export default ({ filter, type }) => {
   const findUserError = err => Promise.reject(err);
 
   const handleUser = user => {
@@ -18,7 +17,7 @@ export default (filter) => {
     });
   };
 
-  return find(USER, filter)
+  return find(type, filter)
     .then(handleUser)
     .catch(findUserError);
 };

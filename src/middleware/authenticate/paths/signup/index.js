@@ -13,6 +13,11 @@ import { createUser } from '../utils/';
  * @return {Function}
  */
 export default (request) => {
+  const { body, header } = request;
+  const userType = header['user-type'];
+
+  if (!userType) return Promise.reject('The \'user-type\' header is not defined.');
+
   const authBody = {
     token: '',
     user: {},
@@ -24,8 +29,11 @@ export default (request) => {
   };
 
   const handleHash = hashedPassword => {
-    request.body.password = hashedPassword;
-    return request.body;
+    body.password = hashedPassword;
+    return {
+      type: userType,
+      body,
+    };
   };
 
   const handleSignupUser = user => {
@@ -37,7 +45,7 @@ export default (request) => {
 
   const signupError = err => Promise.reject(err);
 
-  return bcryptHash(request.body.password)
+  return bcryptHash(body.password)
     .then(handleHash)
     .then(createUser)
     .then(handleSignupUser)

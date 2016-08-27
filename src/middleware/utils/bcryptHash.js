@@ -7,7 +7,7 @@ const saltRounds = 10;
  * @param {String} password - Plain text password.
  * @return {Function}
  */
-export default (password) => {
+export default password => {
   if (!password) {
     return Promise.reject({
       message: 'Password undefined in bcrypt hash.',

@@ -1,4 +1,8 @@
 export { default as stripe } from './stripe';
+export { default as bcryptCompare } from './bcryptCompare';
+export { default as bcryptHash } from './bcryptHash';
+export { default as createToken } from './createToken';
+export { default as verifyToken } from './verifyToken';
 export {
   invalidRequestError,
   algoliaError,

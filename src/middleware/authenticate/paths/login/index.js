@@ -10,6 +10,11 @@ import { findUser } from '../utils/';
  * @return {Function}
  */
 export default (request) => {
+  const { body, header } = request;
+  const userType = header['user-type'];
+
+  if (!userType) return Promise.reject('The \'user-type\' header is not defined.');
+
   const authBody = {
     token: '',
     user: {},
@@ -24,7 +29,7 @@ export default (request) => {
 
   const checkPassword = user => {
     authBody.user = user;
-    return bcryptCompare(request.body.password, user.password);
+    return bcryptCompare(body.password, user.password);
   };
 
   const handleSuccess = () => {
@@ -32,7 +37,14 @@ export default (request) => {
     return authBody.user.id;
   };
 
-  return findUser({ email: request.body.email })
+  const findBody = {
+    type: userType,
+    filter: {
+      email: body.email,
+    },
+  };
+
+  return findUser(findBody)
     .then(checkPassword)
     .then(handleSuccess)
     .then(createToken)

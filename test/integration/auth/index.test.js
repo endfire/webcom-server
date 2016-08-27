@@ -1,29 +1,10 @@
 import test from 'ava';
 import request from 'supertest-as-promised';
-import redink from 'redink';
-import r from 'rethinkdb';
-import schemas from '../../../src/schemas';
 
 const url = process.env.AUTH_URL;
 let token;
 
 test.before('Integration: Signup to authenticate', async t => {
-  const options = {
-    host: process.env.RETHINKDB_URL,
-    name: process.env.RETHINKDB_NAME,
-    schemas,
-  };
-
-  const conn = await redink().start(options);
-
-  t.truthy(conn, 'connection is present');
-
-  const table = await r.table(process.env.AUTHENTICATE_TABLE).delete().run(conn);
-
-  t.truthy(table, 'table (dummy) successfully cleared');
-
-  await redink().stop();
-
   const signup = await request(url)
     .post('/signup')
     .set('content-type', 'application/json')
@@ -47,6 +28,7 @@ test('Integration: Returning user', async t => {
     .set('auth-table', 'user')
     .send(JSON.stringify({ token }));
 
+  console.log(returning);
   t.is(returning.status, 202);
 });
 

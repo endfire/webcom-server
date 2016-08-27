@@ -27,13 +27,12 @@ export default (ctx, next) => {
     invalidMethodError(`Method not allowed, expected POST but got ${method}`);
   }
 
-
   const handleRequest = body => {
     request.body = body;
     return request;
   };
 
-  const handleAuthenticateError = () => authenticationError('Invalid email and/or password.');
+  const handleAuthenticateError = (err) => authenticationError(err.message);
 
   switch (path) {
     case '/auth/signup':

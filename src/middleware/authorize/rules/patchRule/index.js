@@ -28,7 +28,7 @@ export default (ctx) => {
     case PROVIDER:
     case PRACTICE:
       // Check and ensure user is part of the practice.
-      rules = [ensureMemberOfPractice];
+      rules = [ensureMemberOfCompany];
       return validateRequestWithToken(rules, ctx, authorization);
 
     case COMPANY:
