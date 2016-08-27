@@ -32,10 +32,7 @@ export default (request) => {
     return bcryptCompare(body.password, user.password);
   };
 
-  const handleSuccess = () => {
-    delete authBody.user.password;
-    return authBody.user.id;
-  };
+  const handleSuccess = () => authBody.user.id;
 
   const findBody = {
     type: userType,

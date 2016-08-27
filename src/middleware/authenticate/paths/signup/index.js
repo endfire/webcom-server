@@ -37,8 +37,6 @@ export default (request) => {
   };
 
   const handleSignupUser = user => {
-    delete user.password;
-    delete user.stripe;
     authBody.user = user;
     return createToken(user);
   };

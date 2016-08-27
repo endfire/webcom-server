@@ -16,7 +16,6 @@ export default (request) => {
   if (!userType) return Promise.reject('The \'user-type\' header is not defined.');
 
   const handleVerifyUser = user => {
-    delete user.password;
     request.body = user;
     return request.body;
   };

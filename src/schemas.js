@@ -118,6 +118,7 @@ export default {
   [SUBMISSION]: {
     attributes: {
       meta: true,
+      stripe: true,
     },
     relationships: {
       form: getRelationship(BELONGS, FORM, 'submissions'),

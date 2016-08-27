@@ -1,5 +1,4 @@
-// import { forEach } from 'lodash';
-// import { schemas } from '@directly/schemas';
+/* eslint-disable no-param-reassign */
 
 /**
  * Redink start middleware to set Koa response.
@@ -14,11 +13,17 @@ export default (ctx, next) => (
 
     switch (typeof request.body) {
       case 'object':
+        delete request.body.password;
         response.body = request.body;
         break;
+
       case 'array':
-        response.body = request.body;
+        response.body = request.body.map(record => {
+          delete record.password;
+          return record;
+        });
         break;
+
       default:
         response.body = request.body;
     }
