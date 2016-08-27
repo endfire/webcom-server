@@ -6,7 +6,7 @@ import excel from 'excel-export';
  * Export people table
  *
  **/
-export const exportPeople = () => {
+export default () => {
   const fields = [
     'name',
     'email',
@@ -100,9 +100,4 @@ export const exportCompanies = () => {
         resolve(new Buffer(exportFile, 'binary'));
       });
   });
-};
-
-export const exportSubmissions = (id) => {
-  console.log('ID');
-  return id;
 };

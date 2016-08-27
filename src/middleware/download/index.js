@@ -1,5 +1,5 @@
 import { RedinkHttpError } from 'redink-errors';
-import { exportPeople, exportCompanies, exportSubmissions } from '../utils/export';
+import { exportPeople, exportCompanies, exportSubmissions } from './export';
 
 export default (ctx) => {
   const { params, response } = ctx;

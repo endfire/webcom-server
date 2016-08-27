@@ -1,45 +1,43 @@
+/* eslint-disable no-console */
+import bodyParser from 'koa-bodyparser';
+import cors from 'kcors';
+import Koa from 'koa';
 import redink from 'redink';
-import Server from 'redink-server';
+import Router from 'koa-router';
 import schemas from './schemas';
-import application from './application';
-import compose from 'koa-compose';
-import createError from 'http-errors';
-
-import { writeMiddleware,
-         readMiddleware,
-         authenticateMiddleware,
-         downloadMiddleware } from './middleware';
+import routes, { configureRoutes } from './routes';
+import * as verbs from './constants/http';
 
 const {
-  RETHINKDB_URL: host,
-  RETHINKDB_NAME: name,
-  PORT: port = 3000,
+    RETHINKDB_URL: host,
+    RETHINKDB_NAME: name,
+    PORT: port = 4200,
 } = process.env;
 
-const exportMiddleware = compose(downloadMiddleware);
-
-const customRoute = {
-  '/api/download/:table': {
-    post: exportMiddleware,
-  },
-};
-
-const db = redink();
-const server = new Server(
-  writeMiddleware,
-  readMiddleware,
-  authenticateMiddleware,
-  customRoute
-);
-
 const options = {
-  server,
+  schemas,
   host,
   name,
-  schemas,
-  port,
 };
 
-application(options, db)
-  .start()
-  .catch(err => createError('500', `Could not start webcom server: ${err.message}`));
+const app = new Koa();
+const router = new Router();
+const db = redink();
+
+app.use(cors({
+  origin: '*',
+  allowMethods: [verbs.GET, verbs.PATCH, verbs.POST, verbs.DELETE],
+}));
+
+app.use(bodyParser());
+configureRoutes(router, routes);
+app.use(router.routes());
+
+db.start(options)
+  .then(() => {
+    app.listen(port);
+    console.log(`Server started on port ${port}.`);
+  })
+  .catch(err => {
+    throw err;
+  });
