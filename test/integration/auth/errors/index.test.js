@@ -6,7 +6,7 @@ applyHooks(test);
 
 const host = 'http://localhost';
 
-test('should throw an error with incorrect password', async t => {
+test('should throw an error with incorrect password for user', async t => {
   const login = await request(`${host}:${t.context.port}/auth`)
     .post('/token')
     .set('content-type', 'application/json')
@@ -17,19 +17,19 @@ test('should throw an error with incorrect password', async t => {
     }));
 
   t.is(login.status, 401, 'User not authenticated');
+  t.is(login.body.message, 'Incorrect email and/or password.');
 });
 
-test('should login with the correct credentials', async t => {
+test('should throw an error with incorrect email', async t => {
   const login = await request(`${host}:${t.context.port}/auth`)
     .post('/token')
     .set('content-type', 'application/json')
     .set('user-type', 'user')
     .send(JSON.stringify({
-      email: 'marsha@webcom.com',
+      email: 'marsha@incorrect.com',
       password: 'testman',
     }));
 
-  t.is(login.status, 200);
-  t.truthy(login.body.token, 'Contains the token');
-  t.truthy(login.body.user, 'Contains the user');
+  t.is(login.status, 401, 'User not authenticated');
+  t.is(login.body.message, 'Incorrect email and/or password.');
 });

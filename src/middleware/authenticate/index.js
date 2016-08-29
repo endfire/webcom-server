@@ -32,7 +32,7 @@ export default (ctx, next) => {
     return request;
   };
 
-  const handleAuthenticateError = (err) => authenticationError(err.message);
+  const handleAuthenticateError = () => authenticationError('Incorrect email and/or password.');
 
   switch (path) {
     case '/auth/signup':

@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "description": "Webcom's backend.",
   "main": "index.js",
-  "author": "Dylan Slack <dylanslack@gmail.com> (http://www.dylanslack.me)",
+  "authors": [
+    "Dylan Slack <dylanslack@gmail.com> (http://www.dylanslack.me)",
+    "CJ Brewer <brewercalvinj@gmail.com>",
+  ],
   "engines": {
     "node": "6.0.0"
   },
@@ -73,12 +76,14 @@
     "koa-compose": "^3.1.0",
     "koa-router": "^7.0.1",
     "lodash": "^4.13.1",
+    "qs": "^6.2.1",
     "redink": "^0.1.7",
     "rethinkdb": "^2.3.2",
     "stripe": "^4.9.1"
   },
   "devDependencies": {
     "ava": "^0.15.2",
+    "ava-rethinkdb": "^0.1.3",
     "babel-cli": "^6.10.1",
     "babel-eslint": "^6.0.4",
     "babel-preset-es2015": "^6.9.0",

@@ -1,4 +1,4 @@
-import test from 'ava';
+/* import test from 'ava';
 import request from 'supertest-as-promised';
 import redink from 'redink';
 import r from 'rethinkdb';
@@ -105,4 +105,4 @@ test('Integration: Download file', async t => {
     .send();
 
   t.deepEqual(file.text, 'Accepted', 'Download file');
-});
+}); */

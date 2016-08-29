@@ -1,4 +1,28 @@
-import { invalidMethodError, authorizationError } from '../utils/';
+import { invalidRequestError, authorizationError, verifyToken } from '../utils/';
+
+/**
+ * Authorize middleware to verify API calls.
+ *
+ * @param {Object} ctx
+ * @param {Function} next
+ * @return {Function}
+ */
+export default (ctx, next) => {
+  const { request: { header } } = ctx;
+  const { authorization } = header;
+
+  if (!authorization) {
+    invalidRequestError('Missing authorization header.');
+  }
+
+  const handleAuthorizeError = err => authorizationError(err.message);
+
+  return verifyToken(authorization)
+    .then(next)
+    .catch(handleAuthorizeError);
+};
+
+/* import { invalidMethodError, authorizationError } from '../utils/';
 
 import {
   GET,
@@ -15,13 +39,6 @@ import {
   postRule,
 } from './rules/';
 
-/**
- * Authorize middleware to verify API calls.
- *
- * @param {Object} ctx
- * @param {Function} next
- * @return {Function}
- */
 export default (ctx, next) => {
   const { params: { id }, request: { method } } = ctx;
   let dispatch;
@@ -67,4 +84,4 @@ export default (ctx, next) => {
   }
 
   return dispatch.then(next);
-};
+}; */

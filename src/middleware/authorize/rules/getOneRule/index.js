@@ -1,14 +1,6 @@
-// import { validateRequestWithToken } from '../utils/';
-
-import {
-  USER,
-  COMPANY,
-  AD,
-  PERSON,
-  BRAND,
-  CATEGORY,
-  FORM,
-} from '../../../../constants/entities';
+/* eslint-disable */
+import { validateRequestWithToken } from '../utils/';
+import * as types from '../../../../constants/entities';
 
 export default (ctx) => {
   const { request, params: { table } } = ctx;
@@ -25,7 +17,10 @@ export default (ctx) => {
     case BRAND:
     case CATEGORY:
     case FORM:
-      // Authorize the request to GET one price.
+    case SUBMISSION:
+      // TODO: Need to differentiate between user and company
+      // If company, ensure correct company id
+      // If user, then can get one of anything
       return Promise.resolve(true);
 
     default:

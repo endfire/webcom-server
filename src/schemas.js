@@ -1,16 +1,5 @@
 import { MANY, BELONGS } from './constants/relationships';
-
-import {
-  USER,
-  COMPANY,
-  AD,
-  PERSON,
-  BRAND,
-  CATEGORY,
-  FORM,
-  SUBMISSION,
-  FIELD,
-} from './constants/entities';
+import * as types from './constants/entities';
 
 const getRelationship = (type, relationship, inverse) => ({
   [type]: relationship,
@@ -18,15 +7,16 @@ const getRelationship = (type, relationship, inverse) => ({
 });
 
 export default {
-  [USER]: {
+  [types.USER]: {
     attributes: {
       name: true,
       email: true,
       password: true,
       role: true,
+      meta: true,
     },
   },
-  [COMPANY]: {
+  [types.COMPANY]: {
     attributes: {
       name: true,
       street: true,
@@ -41,12 +31,12 @@ export default {
       meta: true,
     },
     relationships: {
-      listings: getRelationship(MANY, CATEGORY, 'listings'),
-      ads: getRelationship(MANY, COMPANY, 'company'),
-      people: getRelationship(MANY, PERSON, 'company'),
+      listings: getRelationship(MANY, types.CATEGORY, 'listings'),
+      ads: getRelationship(MANY, types.COMPANY, 'company'),
+      people: getRelationship(MANY, types.PERSON, 'company'),
     },
   },
-  [AD]: {
+  [types.AD]: {
     attributes: {
       name: true,
       image: true,
@@ -57,11 +47,11 @@ export default {
       meta: true,
     },
     relationships: {
-      company: getRelationship(BELONGS, COMPANY, 'ads'),
-      categories: getRelationship(MANY, CATEGORY, 'ads'),
+      company: getRelationship(BELONGS, types.COMPANY, 'ads'),
+      categories: getRelationship(MANY, types.CATEGORY, 'ads'),
     },
   },
-  [PERSON]: {
+  [types.PERSON]: {
     attributes: {
       name: true,
       email: true,
@@ -70,10 +60,10 @@ export default {
       meta: true,
     },
     relationships: {
-      company: getRelationship(BELONGS, COMPANY, 'people'),
+      company: getRelationship(BELONGS, types.COMPANY, 'people'),
     },
   },
-  [BRAND]: {
+  [types.BRAND]: {
     attributes: {
       name: true,
       image: true,
@@ -84,51 +74,51 @@ export default {
       meta: true,
     },
     relationships: {
-      forms: getRelationship(MANY, FORM, 'brand'),
-      categories: getRelationship(MANY, CATEGORY, 'brand'),
+      forms: getRelationship(MANY, types.FORM, 'brand'),
+      categories: getRelationship(MANY, types.CATEGORY, 'brand'),
     },
   },
-  [CATEGORY]: {
+  [types.CATEGORY]: {
     attributes: {
       name: true,
       heading: true,
       meta: true,
     },
     relationships: {
-      brand: getRelationship(BELONGS, BRAND, 'categories'),
-      listings: getRelationship(MANY, COMPANY, 'listings'),
-      ads: getRelationship(MANY, AD, 'categories'),
+      brand: getRelationship(BELONGS, types.BRAND, 'categories'),
+      listings: getRelationship(MANY, types.COMPANY, 'listings'),
+      ads: getRelationship(MANY, types.AD, 'categories'),
     },
   },
-  [FORM]: {
+  [types.FORM]: {
     attributes: {
       name: true,
       published: true,
       meta: true,
     },
     relationships: {
-      brand: getRelationship(BELONGS, BRAND, 'forms'),
-      submissions: getRelationship(MANY, SUBMISSION, 'form'),
+      brand: getRelationship(BELONGS, types.BRAND, 'forms'),
+      submissions: getRelationship(MANY, types.SUBMISSION, 'form'),
       fields: {
-        [MANY]: FIELD,
+        [MANY]: types.FIELD,
         embedded: true,
       },
     },
   },
-  [SUBMISSION]: {
+  [types.SUBMISSION]: {
     attributes: {
       meta: true,
       stripe: true,
     },
     relationships: {
-      form: getRelationship(BELONGS, FORM, 'submissions'),
+      form: getRelationship(BELONGS, types.FORM, 'submissions'),
       fields: {
-        [MANY]: FIELD,
+        [MANY]: types.FIELD,
         embedded: true,
       },
     },
   },
-  [FIELD]: {
+  [types.FIELD]: {
     attributes: {
       section: true,
       label: true,

@@ -1,17 +1,6 @@
+/* eslint-disable */
 import { validateRequestWithToken } from '../utils/';
-
-import {
-  CARD,
-  INVOICE,
-  OFFICE,
-  PRICE,
-  PROVIDER,
-  PRACTICE,
-  COMPANY,
-  PRACTICE_PERMISSION,
-  COMPANY_PERMISSION,
-  ONBOARDING,
-} from '../../../../constants/entities';
+import * as types from '../../../../constants/entities';
 
 import { ensureCorrectUser } from '../checks/';
 
@@ -44,6 +33,7 @@ export default (ctx) => {
     case COMPANY:
       // FIXME: Need to secure practice posting.
       return Promise.resolve(true);
+
     default:
       return Promise.reject({
         message: `Not authorized to POST to table '${table}'.`,

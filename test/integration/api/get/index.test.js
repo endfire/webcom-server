@@ -1,4 +1,4 @@
-import test from 'ava';
+/* import test from 'ava';
 import request from 'supertest-as-promised';
 import redink from 'redink';
 import r from 'rethinkdb';
@@ -60,4 +60,4 @@ test('Integration: Post and get relationships from api', async t => {
     .send(JSON.stringify(brand));
 
   t.is(createBrand.status, 202, 'Created a brand');
-});
+}); */

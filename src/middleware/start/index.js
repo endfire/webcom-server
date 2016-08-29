@@ -7,27 +7,29 @@
  * @param {Function} next
  * @return {Object} - Koa response
  */
-export default (ctx, next) => (
-  next().then(() => {
-    const { response, request } = ctx;
+export default (ctx, next) => {
+  const { response, request } = ctx;
 
-    switch (typeof request.body) {
-      case 'object':
-        delete request.body.password;
-        response.body = request.body;
-        break;
-
-      case 'array':
+  return next()
+    .then(() => {
+      if (Array.isArray(request.body)) {
         response.body = request.body.map(record => {
           delete record.password;
           return record;
         });
-        break;
-
-      default:
+      } else if (typeof request.body === 'object') {
+        delete request.body.password;
         response.body = request.body;
-    }
+      } else {
+        response.body = request.body;
+      }
+    })
 
-    return response;
-  })
-);
+    .catch(err => {
+      response.status = err.status;
+      response.body = {
+        type: err.type,
+        message: err.message,
+      };
+    });
+};

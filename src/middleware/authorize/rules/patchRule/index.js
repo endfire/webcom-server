@@ -1,14 +1,15 @@
+/* eslint-disable */
 import { validateRequestWithToken } from '../utils/';
 
 import {
-  INVOICE,
-  OFFICE,
-  PRICE,
-  PROVIDER,
-  PRACTICE,
-  COMPANY,
   USER,
-  ONBOARDING,
+  COMPANY,
+  AD,
+  PERSON,
+  BRAND,
+  CATEGORY,
+  FORM,
+  SUBMISSION,
 } from '../../../../constants/entities';
 
 import {

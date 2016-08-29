@@ -16,8 +16,8 @@ export default (plaintextPassword, hashedPassword) => {
 
   return new Promise((resolve, reject) => {
     bcrypt.compare(plaintextPassword, hashedPassword, (err, res) => (
-      err
-        ? reject(err)
+      (err || !res)
+        ? reject(err || { message: 'Incorrect password.' })
         : resolve(res)
     ));
   });

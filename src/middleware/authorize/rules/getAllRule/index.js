@@ -1,12 +1,5 @@
-import {
-  USER,
-  COMPANY,
-  AD,
-  PERSON,
-  BRAND,
-  CATEGORY,
-  FORM,
-} from '../../../../constants/entities';
+/* eslint-disable */
+import * as types from '../../../../constants/entities';
 
 export default (ctx) => {
   const { params: { table } } = ctx;
@@ -19,7 +12,10 @@ export default (ctx) => {
     case BRAND:
     case CATEGORY:
     case FORM:
-      // Authorize GET all offices for now.
+    case SUBMISSION:
+      // TODO: Need to differentiate between user and company
+      // If company, ensure correct company id
+      // If user, then can get all of anything
       return Promise.resolve(true);
 
     default:
