@@ -32,7 +32,7 @@ export default {
     },
     relationships: {
       listings: getRelationship(MANY, types.CATEGORY, 'listings'),
-      ads: getRelationship(MANY, types.COMPANY, 'company'),
+      ads: getRelationship(MANY, types.AD, 'company'),
       people: getRelationship(MANY, types.PERSON, 'company'),
     },
   },

@@ -9,7 +9,7 @@ const host = 'http://localhost';
 let token;
 let brandObject;
 
-test.only('Integration: Post, patch, and delete from api', async t => {
+test('Integration: Post, patch, and delete from api', async t => {
   const login = await request(`${host}:${t.context.port}/auth`)
     .post('/token')
     .set('content-type', 'application/json')
