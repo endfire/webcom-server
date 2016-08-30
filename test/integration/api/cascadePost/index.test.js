@@ -8,7 +8,7 @@ const host = 'http://localhost';
 
 let token;
 
-test.only('should create a brand and category', async t => {
+test('should create a brand and category', async t => {
   const login = await request(`${host}:${t.context.port}/auth`)
     .post('/token')
     .set('content-type', 'application/json')
