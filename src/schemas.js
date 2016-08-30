@@ -1,4 +1,4 @@
-import { MANY, BELONGS } from './constants/relationships';
+import { MANY, BELONGS, ONE } from './constants/relationships';
 import * as types from './constants/entities';
 
 const getRelationship = (type, relationship, inverse) => ({
@@ -99,33 +99,56 @@ export default {
     relationships: {
       brand: getRelationship(BELONGS, types.BRAND, 'forms'),
       submissions: getRelationship(MANY, types.SUBMISSION, 'form'),
-      fields: {
-        [MANY]: types.FIELD,
-        embedded: true,
-      },
+      fields: getRelationship(MANY, types.FIELD, 'form'),
+      payment: getRelationship(ONE, types.PAYMENT, 'form'),
     },
   },
   [types.SUBMISSION]: {
     attributes: {
       meta: true,
       stripe: true,
+      fields: true,
+      payment: true,
     },
     relationships: {
       form: getRelationship(BELONGS, types.FORM, 'submissions'),
-      fields: {
-        [MANY]: types.FIELD,
-        embedded: true,
-      },
     },
   },
   [types.FIELD]: {
     attributes: {
-      section: true,
       label: true,
       placeholder: true,
       type: true,
       value: true,
-      priority: true,
+      meta: true,
+    },
+    relationships: {
+      form: getRelationship(BELONGS, types.FORM, 'fields'),
+    },
+  },
+  [types.PAYMENT]: {
+    attributes: {
+      meta: true,
+      expMonth: true,
+      expYear: true,
+      cardNumber: true,
+      cardCvc: true,
+    },
+    relationships: {
+      items: getRelationship(MANY, types.ITEM, 'payment'),
+      form: getRelationship(BELONGS, types.FORM, 'payment'),
+    },
+  },
+  [types.ITEM]: {
+    attributes: {
+      meta: true,
+      price: true,
+      quantity: true,
+      description: true,
+      label: true,
+    },
+    relationships: {
+      payment: getRelationship(BELONGS, types.PAYMENT, 'items'),
     },
   },
 };
