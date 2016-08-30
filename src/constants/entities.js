@@ -7,3 +7,5 @@ export const CATEGORY = 'category';
 export const FORM = 'form';
 export const SUBMISSION = 'submission';
 export const FIELD = 'field';
+export const PAYMENT = 'payment';
+export const ITEM = 'item';
