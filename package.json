@@ -5,7 +5,7 @@
   "main": "index.js",
   "authors": [
     "Dylan Slack <dylanslack@gmail.com> (http://www.dylanslack.me)",
-    "CJ Brewer <brewercalvinj@gmail.com>",
+    "CJ Brewer <brewercalvinj@gmail.com>"
   ],
   "engines": {
     "node": "6.0.0"

@@ -1,9 +1,10 @@
 import { RedinkHttpError } from 'redink-errors';
 import { exportPeople, exportCompanies, exportSubmissions } from './export';
 
-export default (ctx) => {
+export default (ctx, next) => {
   const { params, response } = ctx;
   const { table, id } = params;
+  let dispatch;
 
   const handleError = err => {
     throw new RedinkHttpError(400, `Error in download middleware: ${err.message}`);
@@ -18,24 +19,22 @@ export default (ctx) => {
 
   switch (table) {
     case 'people':
-      exportPeople().then(buffer => {
-        response.body = buffer;
-        return ctx;
-      });
+      dispatch = exportPeople();
       break;
+
     case 'companies':
-      exportCompanies().then(buffer => {
-        response.body = buffer;
-        return ctx;
-      });
+      dispatch = exportCompanies();
       break;
+
     case 'submissions':
-      exportSubmissions(id).then(buffer => {
-        response.body = buffer;
-        return ctx;
-      });
+      dispatch = exportSubmissions(id);
       break;
+
     default:
       handleError(new RedinkHttpError(400, `Download table '${table}' is not supported.`));
   }
+
+  return dispatch
+    .then(buffer => (response.body = buffer))
+    .then(next);
 };
