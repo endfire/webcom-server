@@ -7,9 +7,8 @@ applyHooks(test);
 const host = 'http://localhost';
 
 let token;
-let brandObject;
 
-test('should post patch and then delete a record', async t => {
+test.only('should create a brand and category', async t => {
   const login = await request(`${host}:${t.context.port}/auth`)
     .post('/token')
     .set('content-type', 'application/json')
@@ -42,40 +41,35 @@ test('should post patch and then delete a record', async t => {
     .set('content-type', 'application/json')
     .set('authorization', token)
     .send(JSON.stringify(brand))
-    .then(res => {
-      brandObject = res.body;
-      return res;
-    });
+    .then(res => res);
 
-  t.is(createBrand.status, 200, 'Created a brand');
+  t.is(createBrand.status, 200, 'Creaded a brand');
+  t.is(createBrand.body.name, 'Test brand', 'Created a brand');
 
-  const newBrand = {
-    name: 'New brand',
-    image: {
-      img: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
-      publicId: brandObject.image.publicId,
-    },
+  const category = {
+    name: 'Tester',
+    heading: 'Test',
+    brand: createBrand.body.id,
+    listings: [],
+    ads: [],
   };
 
-  const patchBrand = await request(`${host}:${t.context.port}/api`)
-    .patch(`/brand/${brandObject.id}`)
+  const createCategory = await request(`${host}:${t.context.port}/api`)
+    .post('/category')
     .set('content-type', 'application/json')
     .set('authorization', token)
-    .send(JSON.stringify(newBrand))
-    .then(res => {
-      brandObject = res.body;
-      return res;
-    });
+    .send(JSON.stringify(category))
+    .then(res => res);
 
-  t.is(patchBrand.status, 200, 'Patched a brand');
-  t.deepEqual(patchBrand.body.name, 'New brand');
+  t.is(createCategory.status, 200, 'Deleted a brand');
+  t.is(createCategory.body.name, 'Tester', 'Deleted a brand');
+  t.is(createCategory.body.brand.id, createBrand.body.id, 'Deleted a brand');
 
-  const deleteBrand = await request(`${host}:${t.context.port}/api`)
-    .delete(`/brand/${brandObject.id}`)
-    .set('content-type', 'application/json')
+  const fetchBrand = await request(`${host}:${t.context.port}/api`)
+    .get(`/brand/${createBrand.body.id}`)
     .set('authorization', token)
     .send()
     .then(res => res);
 
-  t.is(deleteBrand.status, 200, 'Deleted a brand');
+  t.deepEqual(fetchBrand.body.categories[0].id, createCategory.body.id, 'Fetched the Ad');
 });

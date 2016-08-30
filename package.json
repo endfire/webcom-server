@@ -44,7 +44,7 @@
       "command": "eslint src test"
     },
     "test:src": {
-      "command": "nyc ava && nyc report --reporter=lcov"
+      "command": "nyc ava --serial && nyc report --reporter=lcov"
     },
     "integration:start": {
       "command": "npm start",

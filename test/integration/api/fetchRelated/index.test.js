@@ -8,7 +8,7 @@ const host = 'http://localhost';
 
 let token;
 
-test.only('should fetch the related company from the ad', async t => {
+test('should fetch the related company from the ad', async t => {
   const login = await request(`${host}:${t.context.port}/auth`)
     .post('/token')
     .set('content-type', 'application/json')
@@ -24,7 +24,7 @@ test.only('should fetch the related company from the ad', async t => {
 
   token = login.body.token;
 
-  const expectedAd = {
+  const expectedCompany = {
     id: '1',
     name: 'Company One',
     street: '123 S. Me Lane',
@@ -152,9 +152,8 @@ test.only('should fetch the related company from the ad', async t => {
     .send()
     .then(res => res);
 
-  console.log(fetchOneRelated.body);
-  console.log('-------------');
-  console.log(expectedAd);
-
-  t.is(fetchOneRelated.body, expectedAd, 'Fetched the Ad');
+  t.deepEqual(fetchOneRelated.body.listings, expectedCompany.listings, 'Fetched the Ad');
+  t.deepEqual(fetchOneRelated.body.ads, expectedCompany.ads, 'Fetched the Ad');
+  t.deepEqual(fetchOneRelated.body.people, expectedCompany.people, 'Fetched the Ad');
+  t.deepEqual(fetchOneRelated.body.name, expectedCompany.name, 'Fetched the Ad');
 });

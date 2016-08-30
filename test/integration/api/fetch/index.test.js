@@ -73,5 +73,7 @@ test('should fetch the record with populated relationships', async t => {
     .send()
     .then(res => res);
 
-  t.deepEqual(fetchAd.body, expectedAd, 'Fetched the Ad');
+  t.deepEqual(fetchAd.body.company.name, expectedAd.company.name, 'Fetched the Ad');
+  t.deepEqual(fetchAd.body.categories.name, expectedAd.categories.name, 'Fetched the Ad');
+  t.deepEqual(fetchAd.body.name, expectedAd.name, 'Fetched the Ad');
 });
