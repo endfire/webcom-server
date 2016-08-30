@@ -1,3 +1,1 @@
-import schemas from './schemas';
-
-export { schemas };
+export { default as initData } from './initData';

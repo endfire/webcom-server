@@ -1,13 +1,22 @@
+import { MANY, BELONGS } from './constants/relationships';
+import * as types from './constants/entities';
+
+const getRelationship = (type, relationship, inverse) => ({
+  [type]: relationship,
+  inverse,
+});
+
 export default {
-  user: {
+  [types.USER]: {
     attributes: {
       name: true,
       email: true,
       password: true,
       role: true,
+      meta: true,
     },
   },
-  company: {
+  [types.COMPANY]: {
     attributes: {
       name: true,
       street: true,
@@ -22,21 +31,12 @@ export default {
       meta: true,
     },
     relationships: {
-      listings: {
-        hasMany: 'category',
-        inverse: 'listings',
-      },
-      ads: {
-        hasMany: 'ad',
-        inverse: 'company',
-      },
-      people: {
-        hasMany: 'person',
-        inverse: 'company',
-      },
+      listings: getRelationship(MANY, types.CATEGORY, 'listings'),
+      ads: getRelationship(MANY, types.AD, 'company'),
+      people: getRelationship(MANY, types.PERSON, 'company'),
     },
   },
-  ad: {
+  [types.AD]: {
     attributes: {
       name: true,
       image: true,
@@ -47,17 +47,11 @@ export default {
       meta: true,
     },
     relationships: {
-      company: {
-        belongsTo: 'company',
-        inverse: 'ads',
-      },
-      categories: {
-        hasMany: 'category',
-        inverse: 'ads',
-      },
+      company: getRelationship(BELONGS, types.COMPANY, 'ads'),
+      categories: getRelationship(MANY, types.CATEGORY, 'ads'),
     },
   },
-  person: {
+  [types.PERSON]: {
     attributes: {
       name: true,
       email: true,
@@ -66,13 +60,10 @@ export default {
       meta: true,
     },
     relationships: {
-      company: {
-        belongsTo: 'company',
-        inverse: 'people',
-      },
+      company: getRelationship(BELONGS, types.COMPANY, 'people'),
     },
   },
-  brand: {
+  [types.BRAND]: {
     attributes: {
       name: true,
       image: true,
@@ -83,74 +74,51 @@ export default {
       meta: true,
     },
     relationships: {
-      forms: {
-        hasMany: 'form',
-        inverse: 'brand',
-      },
-      categories: {
-        hasMany: 'category',
-        inverse: 'brand',
-      },
+      forms: getRelationship(MANY, types.FORM, 'brand'),
+      categories: getRelationship(MANY, types.CATEGORY, 'brand'),
     },
   },
-  category: {
+  [types.CATEGORY]: {
     attributes: {
       name: true,
       heading: true,
       meta: true,
     },
     relationships: {
-      brand: {
-        belongsTo: 'brand',
-        inverse: 'categories',
-      },
-      listings: {
-        hasMany: 'company',
-        inverse: 'listings',
-      },
-      ads: {
-        hasMany: 'ad',
-        inverse: 'categories',
-      },
+      brand: getRelationship(BELONGS, types.BRAND, 'categories'),
+      listings: getRelationship(MANY, types.COMPANY, 'listings'),
+      ads: getRelationship(MANY, types.AD, 'categories'),
     },
   },
-  form: {
+  [types.FORM]: {
     attributes: {
       name: true,
       published: true,
       meta: true,
     },
     relationships: {
-      brand: {
-        belongsTo: 'brand',
-        inverse: 'forms',
-      },
+      brand: getRelationship(BELONGS, types.BRAND, 'forms'),
+      submissions: getRelationship(MANY, types.SUBMISSION, 'form'),
       fields: {
-        hasMany: 'field',
+        [MANY]: types.FIELD,
         embedded: true,
-      },
-      submissions: {
-        hasMany: 'submission',
-        inverse: 'form',
       },
     },
   },
-  submission: {
+  [types.SUBMISSION]: {
     attributes: {
       meta: true,
+      stripe: true,
     },
     relationships: {
-      form: {
-        belongsTo: 'form',
-        inverse: 'submissions',
-      },
+      form: getRelationship(BELONGS, types.FORM, 'submissions'),
       fields: {
-        hasMany: 'field',
+        [MANY]: types.FIELD,
         embedded: true,
       },
     },
   },
-  field: {
+  [types.FIELD]: {
     attributes: {
       section: true,
       label: true,

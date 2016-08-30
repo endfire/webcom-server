@@ -1,30 +1,20 @@
-/* eslint-disable no-console */
-import createError from 'http-errors';
+import bodyParser from 'koa-bodyparser';
+import cors from 'kcors';
+import Koa from 'koa';
+import Router from 'koa-router';
+import routes, { configureRoutes } from './routes';
+import * as verbs from './constants/http';
 
-export default (options, db) => {
-  const { server, schemas, host, name, port } = options;
+const app = new Koa();
+const router = new Router();
 
-  return {
-    start() {
-      return new Promise((resolve, reject) => {
-        server.listen(port).then(message => {
-          console.log(message);
+app.use(cors({
+  origin: '*',
+  allowMethods: [verbs.GET, verbs.PATCH, verbs.POST, verbs.DELETE],
+}));
 
-          const redinkOptions = {
-            schemas,
-            host,
-            name,
-          };
+app.use(bodyParser());
+configureRoutes(router, routes);
+app.use(router.routes());
 
-          db.start(redinkOptions)
-            .then(resolve)
-            .catch(() => reject(createError(503, 'Cannot initialize the database.')));
-        });
-      });
-    },
-
-    stop() {
-      db.stop().then(server.stop());
-    },
-  };
-};
+export default app;
