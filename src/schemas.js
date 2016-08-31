@@ -32,9 +32,20 @@ export default {
       approved: true,
     },
     relationships: {
-      listings: getRelationship(MANY, types.CATEGORY, 'listings'),
+      listings: getRelationship(MANY, types.LISTING, 'company'),
       ads: getRelationship(MANY, types.AD, 'company'),
       people: getRelationship(MANY, types.PERSON, 'company'),
+    },
+  },
+  [types.LISTING]: {
+    attributes: {
+      meta: true,
+      name: true,
+      brand: true,
+    },
+    relationships: {
+      company: getRelationship(BELONGS, types.COMPANY, 'listings'),
+      categories: getRelationship(MANY, types.CATEGORY, 'listings'),
     },
   },
   [types.AD]: {
@@ -87,7 +98,7 @@ export default {
     },
     relationships: {
       brand: getRelationship(BELONGS, types.BRAND, 'categories'),
-      listings: getRelationship(MANY, types.COMPANY, 'listings'),
+      listings: getRelationship(MANY, types.LISTING, 'categories'),
       ads: getRelationship(MANY, types.AD, 'categories'),
     },
   },
