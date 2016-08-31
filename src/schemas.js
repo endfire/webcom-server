@@ -107,6 +107,7 @@ export default {
       name: true,
       didPublish: true,
       didInitialize: true,
+      createdOn: true,
       meta: true,
     },
     relationships: {
@@ -122,6 +123,7 @@ export default {
       stripe: true,
       fields: true,
       payment: true,
+      createdOn: true,
     },
     relationships: {
       form: getRelationship(BELONGS, types.FORM, 'submissions'),
@@ -134,6 +136,7 @@ export default {
       type: true,
       value: true,
       meta: true,
+      createdOn: true,
       isRequired: true,
     },
     relationships: {
@@ -159,6 +162,7 @@ export default {
       price: true,
       quantity: true,
       description: true,
+      createdOn: true,
       label: true,
     },
     relationships: {
