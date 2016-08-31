@@ -94,7 +94,8 @@ export default {
   [types.FORM]: {
     attributes: {
       name: true,
-      published: true,
+      didPublish: true,
+      didInitialize: true,
       meta: true,
     },
     relationships: {
