@@ -29,6 +29,7 @@ export default {
       description: true,
       password: true,
       meta: true,
+      approved: true,
     },
     relationships: {
       listings: getRelationship(MANY, types.CATEGORY, 'listings'),
@@ -121,6 +122,7 @@ export default {
       type: true,
       value: true,
       meta: true,
+      isRequired: true,
     },
     relationships: {
       form: getRelationship(BELONGS, types.FORM, 'fields'),

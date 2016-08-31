@@ -23,6 +23,8 @@ export default (ctx, next) => {
       } else {
         response.body = request.body;
       }
+
+      return response;
     })
 
     .catch(err => {
