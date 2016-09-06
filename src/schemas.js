@@ -40,8 +40,8 @@ export default {
   [types.LISTING]: {
     attributes: {
       meta: true,
-      name: true,
       brand: true,
+      brandId: true,
     },
     relationships: {
       company: getRelationship(BELONGS, types.COMPANY, 'listings'),

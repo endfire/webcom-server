@@ -4,6 +4,7 @@ export const AD = 'ad';
 export const PERSON = 'person';
 export const BRAND = 'brand';
 export const CATEGORY = 'category';
+export const LISTING = 'listing';
 export const FORM = 'form';
 export const SUBMISSION = 'submission';
 export const FIELD = 'field';
