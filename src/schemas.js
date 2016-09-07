@@ -50,7 +50,8 @@ export default {
   },
   [types.AD]: {
     attributes: {
-      name: true,
+      brand: true,
+      brandId: true,
       image: true,
       url: true,
       start: true,
