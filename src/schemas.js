@@ -84,6 +84,7 @@ export default {
       text: true,
       secondary: true,
       obg: true,
+      obgDescription: true,
       meta: true,
     },
     relationships: {
