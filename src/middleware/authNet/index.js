@@ -1,4 +1,4 @@
-import { stripeError, invalidMethodError, stripe } from '../utils';
+import { stripeError, invalidMethodError, authNet } from '../utils';
 import { SUBMISSION } from '../../constants/entities';
 
 /**
@@ -23,25 +23,18 @@ export default (ctx, next) => {
   switch (table) {
     case SUBMISSION: {
       const charge = {
-        amount: body.amount,
-        source: {
-          exp_month: body.expMonth,
-          exp_year: body.expYear,
-          number: body.cardNumber,
-          cvc: body.cardCvc,
-          object: 'card',
-        },
-        receipt_email: body.email,
-        description: body.description,
-        currency: 'usd',
+        number: body.payment.cardNumber,
+        exp: `${body.payment.expMonth}${body.payment.expYear}`,
+        code: body.payment.cardCvc,
+        amount: body.payment.amount,
       };
 
       const handleSuccess = (res) => {
-        body.stripe = res.id;
+        console.log(res);
+        body.stripe = res.getTransactionResponse().getTransId();
       };
 
-      return stripe.charges
-        .create(charge)
+      return authNet(charge)
         .then(handleSuccess)
         .then(next)
         .catch(handleStripeError);
