@@ -16,7 +16,7 @@ export default (ctx, next) => {
     invalidMethodError(`Invalid method expecting POST but got '${method}'`);
   }
 
-  const handleStripeError = err => {
+  const handleAuthNetError = err => {
     stripeError(err.message);
   };
 
@@ -27,17 +27,22 @@ export default (ctx, next) => {
         exp: `${body.payment.expMonth}${body.payment.expYear}`,
         code: body.payment.cardCvc,
         amount: body.payment.amount,
+        firstName: body.payment.firstName,
+        lastName: body.payment.lastName,
+        email: body.payment.email,
       };
 
       const handleSuccess = (res) => {
-        console.log(res);
-        body.stripe = res.getTransactionResponse().getTransId();
+        if (res.messages.resultCode === 'Error') {
+          stripeError('There was a problem processing your transaction.');
+        }
+        body.stripe = res.transactionResponse.transId;
       };
 
       return authNet(charge)
         .then(handleSuccess)
         .then(next)
-        .catch(handleStripeError);
+        .catch(handleAuthNetError);
     }
 
     default:

@@ -28,6 +28,15 @@ test.only('should post a submission', async t => {
     fields: [{
       value: 'Hello',
       label: 'World',
+    }, {
+      value: 'Billy',
+      label: 'firstName',
+    }, {
+      value: 'Jones',
+      label: 'lastName',
+    }, {
+      value: 'billy@jones.com',
+      label: 'email',
     }],
     payment: {
       amount: 2.99,
@@ -35,6 +44,9 @@ test.only('should post a submission', async t => {
       expMonth: '08',
       expYear: '22',
       cardCvc: '999',
+      firstName: 'Billy',
+      lastName: 'Jones',
+      email: 'billy@jones.com',
     },
     createdOn: 'Today',
     form: '1',
