@@ -1,4 +1,4 @@
-import { stripeError, invalidMethodError, stripe } from '../utils';
+import { stripeError, invalidMethodError, authNet } from '../utils';
 import { SUBMISSION } from '../../constants/entities';
 
 /**
@@ -16,35 +16,33 @@ export default (ctx, next) => {
     invalidMethodError(`Invalid method expecting POST but got '${method}'`);
   }
 
-  const handleStripeError = err => {
+  const handleAuthNetError = err => {
     stripeError(err.message);
   };
 
   switch (table) {
     case SUBMISSION: {
       const charge = {
-        amount: body.amount,
-        source: {
-          exp_month: body.expMonth,
-          exp_year: body.expYear,
-          number: body.cardNumber,
-          cvc: body.cardCvc,
-          object: 'card',
-        },
-        receipt_email: body.email,
-        description: body.description,
-        currency: 'usd',
+        number: body.payment.cardNumber,
+        exp: `${body.payment.expMonth}${body.payment.expYear}`,
+        code: body.payment.cardCvc,
+        amount: body.payment.amount,
+        firstName: body.payment.firstName,
+        lastName: body.payment.lastName,
+        email: body.payment.email,
       };
 
       const handleSuccess = (res) => {
-        body.stripe = res.id;
+        if (res.messages.resultCode === 'Error') {
+          stripeError('There was a problem processing your transaction.');
+        }
+        body.stripe = res.transactionResponse.transId;
       };
 
-      return stripe.charges
-        .create(charge)
+      return authNet(charge)
         .then(handleSuccess)
         .then(next)
-        .catch(handleStripeError);
+        .catch(handleAuthNetError);
     }
 
     default:
