@@ -1,22 +1,20 @@
-/* eslint-disable */
-import * as types from '../../../../constants/entities';
+import * as entities from '../../../../constants/entities';
+import { verified } from '../checks/';
+import { validateRequestWithToken } from '../utils/';
 
 export default (ctx) => {
-  const { params: { table } } = ctx;
+  const { request: { header }, params: { table } } = ctx;
+  const { authorization } = header;
+  let rules;
 
   switch (table) {
-    case USER:
-    case COMPANY:
-    case AD:
-    case PERSON:
-    case BRAND:
-    case CATEGORY:
-    case FORM:
-    case SUBMISSION:
-      // TODO: Need to differentiate between user and company
-      // If company, ensure correct company id
-      // If user, then can get all of anything
-      return Promise.resolve(true);
+    case entities.USER:
+    case entities.COMPANY:
+    case entities.BRAND:
+    case entities.FORM:
+    case entities.PERSON:
+      rules = [verified];
+      return validateRequestWithToken(rules, ctx, authorization);
 
     default:
       // Throw error not allowed to get all of this entity

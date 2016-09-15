@@ -1,21 +1,6 @@
-/* eslint-disable */
 import { validateRequestWithToken } from '../utils/';
-
-import {
-  USER,
-  COMPANY,
-  AD,
-  PERSON,
-  BRAND,
-  CATEGORY,
-  FORM,
-  SUBMISSION,
-} from '../../../../constants/entities';
-
-import {
-  ensureCorrectUser,
-  ensureMemberOfCompany,
-} from '../checks/';
+import * as entities from '../../../../constants/entities';
+import { ensureUserRole, ensureUserRoleOrCompany } from '../checks/';
 
 export default (ctx) => {
   const { request: { header }, params: { table } } = ctx;
@@ -23,24 +8,20 @@ export default (ctx) => {
   let rules;
 
   switch (table) {
-    case INVOICE:
-    case OFFICE:
-    case PRICE:
-    case PROVIDER:
-    case PRACTICE:
+    case entities.FIELD:
+    case entities.FORM:
+    case entities.BRAND:
+    case entities.CATEGORY:
+    case entities.AD:
       // Check and ensure user is part of the practice.
-      rules = [ensureMemberOfCompany];
+      rules = [ensureUserRole];
       return validateRequestWithToken(rules, ctx, authorization);
 
-    case COMPANY:
+    case entities.COMPANY:
+    case entities.LISTING:
+    case entities.PERSON:
       // Check and ensure user is part of the company.
-      rules = [ensureMemberOfCompany];
-      return validateRequestWithToken(rules, ctx, authorization);
-
-    case USER:
-    case ONBOARDING:
-      // Check and ensure user's id is the current user's id.
-      rules = [ensureCorrectUser];
+      rules = [ensureUserRoleOrCompany];
       return validateRequestWithToken(rules, ctx, authorization);
 
     default:

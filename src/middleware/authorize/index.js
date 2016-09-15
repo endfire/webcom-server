@@ -1,28 +1,4 @@
-import { invalidRequestError, authorizationError, verifyToken } from '../utils/';
-
-/**
- * Authorize middleware to verify API calls.
- *
- * @param {Object} ctx
- * @param {Function} next
- * @return {Function}
- */
-export default (ctx, next) => {
-  const { request: { header } } = ctx;
-  const { authorization } = header;
-
-  if (!authorization) {
-    invalidRequestError('Missing authorization header.');
-  }
-
-  const handleAuthorizeError = err => authorizationError(err.message);
-
-  return verifyToken(authorization)
-    .then(next)
-    .catch(handleAuthorizeError);
-};
-
-/* import { invalidMethodError, authorizationError } from '../utils/';
+import { invalidMethodError, authorizationError } from '../utils/';
 
 import {
   GET,
@@ -35,12 +11,13 @@ import {
   delRule,
   getAllRule,
   getOneRule,
+  getRelatedRule,
   patchRule,
   postRule,
 } from './rules/';
 
 export default (ctx, next) => {
-  const { params: { id }, request: { method } } = ctx;
+  const { params: { id, field }, request: { method } } = ctx;
   let dispatch;
 
   const handleAuthorizeError = err => authorizationError(err.message);
@@ -56,32 +33,29 @@ export default (ctx, next) => {
 
   switch (method) {
     case GET:
-      dispatch = id
-        ? getOneRule(ctx)
-            .then(didRulePass)
-            .catch(handleAuthorizeError)
-        : getAllRule(ctx)
-            .then(didRulePass)
-            .catch(handleAuthorizeError);
+      if (field) dispatch = getRelatedRule(ctx);
+      else if (id) dispatch = getOneRule(ctx);
+      else dispatch = getAllRule(ctx);
       break;
+
     case POST:
-      dispatch = postRule(ctx)
-        .then(didRulePass)
-        .catch(handleAuthorizeError);
+      dispatch = postRule(ctx);
       break;
+
     case PATCH:
-      dispatch = patchRule(ctx)
-        .then(didRulePass)
-        .catch(handleAuthorizeError);
+      dispatch = patchRule(ctx);
       break;
+
     case DELETE:
-      dispatch = delRule(ctx)
-        .then(didRulePass)
-        .catch(handleAuthorizeError);
+      dispatch = delRule(ctx);
       break;
+
     default:
       invalidMethodError(`Method '${method}' not authorized.`);
   }
 
-  return dispatch.then(next);
-}; */
+  return dispatch
+    .then(didRulePass)
+    .then(next)
+    .catch(handleAuthorizeError);
+};

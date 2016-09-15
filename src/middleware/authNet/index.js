@@ -1,4 +1,4 @@
-import { stripeError, invalidMethodError, authNet } from '../utils';
+import { stripeError, authNet } from '../utils';
 import { SUBMISSION } from '../../constants/entities';
 
 /**
@@ -13,7 +13,7 @@ export default (ctx, next) => {
   const { table } = params;
 
   if (method !== 'POST') {
-    invalidMethodError(`Invalid method expecting POST but got '${method}'`);
+    return next();
   }
 
   const handleAuthNetError = err => {
@@ -22,6 +22,7 @@ export default (ctx, next) => {
 
   switch (table) {
     case SUBMISSION: {
+      // TODO: Check payment info or next()
       const charge = {
         number: body.payment.cardNumber,
         exp: `${body.payment.expMonth}${body.payment.expYear}`,
@@ -36,7 +37,7 @@ export default (ctx, next) => {
         if (res.messages.resultCode === 'Error') {
           stripeError('There was a problem processing your transaction.');
         }
-        body.stripe = res.transactionResponse.transId;
+        body.transactionID = res.transactionResponse.transId;
       };
 
       return authNet(charge)

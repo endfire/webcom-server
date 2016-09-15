@@ -1,8 +1,6 @@
-/* eslint-disable */
 import { validateRequestWithToken } from '../utils/';
-import * as types from '../../../../constants/entities';
-
-import { ensureCorrectUser } from '../checks/';
+import * as entities from '../../../../constants/entities';
+import { ensureUserRole, ensureUserRoleOrCompany } from '../checks/';
 
 export default (ctx) => {
   const { request: { header }, params: { table } } = ctx;
@@ -10,28 +8,26 @@ export default (ctx) => {
   let rules;
 
   switch (table) {
-    case PRACTICE_PERMISSION:
-    case COMPANY_PERMISSION:
-    case ONBOARDING:
-    case CARD:
-      // FIXME: Need to secure practice and company permissions.
-      // Check and ensure user's id is the current user's id.
-      rules = [ensureCorrectUser];
+    case entities.FORM:
+    case entities.FIELD:
+    case entities.CATEGORY:
+    case entities.BRAND:
+    case entities.COMPANY:
+    case entities.AD:
+      rules = [ensureUserRole];
       return validateRequestWithToken(rules, ctx, authorization);
 
-    case INVOICE:
-    case OFFICE:
-    case PRICE:
-    case PROVIDER:
+    case entities.USER:
       // Check and ensure user is part of the practice.
-      rules = [];
+      rules = [ensureUserRole];
       return validateRequestWithToken(rules, ctx, authorization);
 
-    case PRACTICE:
-      // FIXME: Need to secure practice posting.
-      return Promise.resolve(true);
-    case COMPANY:
-      // FIXME: Need to secure practice posting.
+    case entities.LISTING:
+    case entities.PERSON:
+      rules = [ensureUserRoleOrCompany];
+      return validateRequestWithToken(rules, ctx, authorization);
+
+    case entities.SUBMISSION:
       return Promise.resolve(true);
 
     default:

@@ -1,15 +1,6 @@
 import { validateRequestWithToken } from '../utils/';
-
-import {
-  COMPANY,
-  AD,
-  PERSON,
-  BRAND,
-  CATEGORY,
-  FORM,
-} from '../../../../constants/entities';
-
-import { ensureCorrectUser } from '../checks/';
+import * as entities from '../../../../constants/entities';
+import { ensureUserRole, ensureUserRoleOrCompany } from '../checks/';
 
 export default (ctx) => {
   const { request: { header }, params: { table } } = ctx;
@@ -17,16 +8,21 @@ export default (ctx) => {
   let rules;
 
   switch (table) {
-    case COMPANY:
-    case AD:
-    case PERSON:
-    case BRAND:
-    case CATEGORY:
-    case FORM:
-      // TODO: Determine how to differentiate between user and company
-      // If company, determine correct company
-      // If user, determine correct user role
-      rules = [ensureCorrectUser];
+    case entities.USER:
+    case entities.COMPANY:
+    case entities.AD:
+    case entities.BRAND:
+    case entities.CATEGORY:
+    case entities.FORM:
+    case entities.FIELD:
+    case entities.PAYMENT:
+    case entities.ITEM:
+      rules = [ensureUserRole];
+      return validateRequestWithToken(rules, ctx, authorization);
+
+    case entities.LISTING:
+    case entities.PERSON:
+      rules = [ensureUserRoleOrCompany];
       return validateRequestWithToken(rules, ctx, authorization);
 
     default:

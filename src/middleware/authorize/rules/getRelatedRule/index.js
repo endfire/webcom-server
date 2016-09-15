@@ -9,12 +9,11 @@ export default (ctx) => {
 
   switch (table) {
     case entities.COMPANY:
-    case entities.PAYMENT:
+    case entities.BRAND:
       rules = [verified];
       return validateRequestWithToken(rules, ctx, authorization);
 
-    case entities.BRAND:
-    case entities.FORM:
+    case entities.CATEGORY:
       return Promise.resolve(true);
 
     default:
