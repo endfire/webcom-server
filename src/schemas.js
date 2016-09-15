@@ -13,6 +13,7 @@ export default {
       email: true,
       password: true,
       role: true,
+      createdOn: true,
       meta: true,
     },
   },
@@ -28,8 +29,9 @@ export default {
       email: true,
       description: true,
       password: true,
-      meta: true,
       approved: true,
+      createdOn: true,
+      meta: true,
     },
     relationships: {
       listings: getRelationship(MANY, types.LISTING, 'company'),
@@ -39,9 +41,10 @@ export default {
   },
   [types.LISTING]: {
     attributes: {
-      meta: true,
       brand: true,
       brandId: true,
+      createdOn: true,
+      meta: true,
     },
     relationships: {
       company: getRelationship(BELONGS, types.COMPANY, 'listings'),
@@ -57,6 +60,7 @@ export default {
       start: true,
       end: true,
       priority: true,
+      createdOn: true,
       meta: true,
     },
     relationships: {
@@ -70,6 +74,7 @@ export default {
       email: true,
       phone: true,
       job: true,
+      createdOn: true,
       meta: true,
     },
     relationships: {
@@ -84,7 +89,7 @@ export default {
       text: true,
       secondary: true,
       obg: true,
-      obgDescription: true,
+      createdOn: true,
       meta: true,
     },
     relationships: {
@@ -96,6 +101,7 @@ export default {
     attributes: {
       name: true,
       heading: true,
+      createdOn: true,
       meta: true,
     },
     relationships: {
@@ -108,7 +114,6 @@ export default {
     attributes: {
       name: true,
       didPublish: true,
-      didInitialize: true,
       createdOn: true,
       meta: true,
     },
@@ -121,11 +126,12 @@ export default {
   },
   [types.SUBMISSION]: {
     attributes: {
-      meta: true,
-      stripe: true,
       fields: true,
+      items: true,
       payment: true,
+      transactionID: true,
       createdOn: true,
+      meta: true,
     },
     relationships: {
       form: getRelationship(BELONGS, types.FORM, 'submissions'),
@@ -137,9 +143,10 @@ export default {
       placeholder: true,
       type: true,
       value: true,
-      meta: true,
-      createdOn: true,
+      options: true,
       isRequired: true,
+      createdOn: true,
+      meta: true,
     },
     relationships: {
       form: getRelationship(BELONGS, types.FORM, 'fields'),
@@ -147,11 +154,15 @@ export default {
   },
   [types.PAYMENT]: {
     attributes: {
-      meta: true,
       expMonth: true,
       expYear: true,
       cardNumber: true,
       cardCvc: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      createdOn: true,
+      meta: true,
     },
     relationships: {
       items: getRelationship(MANY, types.ITEM, 'payment'),
@@ -160,12 +171,12 @@ export default {
   },
   [types.ITEM]: {
     attributes: {
-      meta: true,
       price: true,
       quantity: true,
       description: true,
-      createdOn: true,
       label: true,
+      createdOn: true,
+      meta: true,
     },
     relationships: {
       payment: getRelationship(BELONGS, types.PAYMENT, 'items'),

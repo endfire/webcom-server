@@ -8,7 +8,7 @@ const host = 'http://localhost';
 
 let token;
 
-test.only('should post a submission', async t => {
+test('should post a submission', async t => {
   const login = await request(`${host}:${t.context.port}/auth`)
     .post('/token')
     .set('content-type', 'application/json')
@@ -58,8 +58,6 @@ test.only('should post a submission', async t => {
     .set('authorization', token)
     .send(JSON.stringify(submission))
     .then(res => res);
-
-  console.log('Create submission here', createSubmission.body);
 
   t.is(createSubmission.status, 200);
 });
