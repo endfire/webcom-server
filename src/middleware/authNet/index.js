@@ -1,5 +1,6 @@
-import { stripeError, authNet } from '../utils';
+import { stripeError } from '../utils';
 import { SUBMISSION } from '../../constants/entities';
+import authNet from 'simple-authorizenet';
 
 /**
  * Checks to see if incoming requests require Stripe.

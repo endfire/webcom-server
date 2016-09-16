@@ -89,6 +89,7 @@ export default {
       text: true,
       secondary: true,
       obg: true,
+      obgDescription: true,
       createdOn: true,
       meta: true,
     },
