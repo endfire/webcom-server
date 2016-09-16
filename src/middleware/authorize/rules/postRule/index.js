@@ -1,6 +1,10 @@
 import { validateRequestWithToken } from '../utils/';
 import * as entities from '../../../../constants/entities';
-import { ensureUserRole, ensureUserRoleOrCompany } from '../checks/';
+import {
+  ensureUserRole,
+  ensureUserRoleOrCompanyCanCreate,
+  ensureUserCanCreateUser,
+} from '../checks/';
 
 export default (ctx) => {
   const { request: { header }, params: { table } } = ctx;
@@ -19,12 +23,12 @@ export default (ctx) => {
 
     case entities.USER:
       // Check and ensure user is part of the practice.
-      rules = [ensureUserRole];
+      rules = [ensureUserCanCreateUser];
       return validateRequestWithToken(rules, ctx, authorization);
 
     case entities.LISTING:
     case entities.PERSON:
-      rules = [ensureUserRoleOrCompany];
+      rules = [ensureUserRoleOrCompanyCanCreate];
       return validateRequestWithToken(rules, ctx, authorization);
 
     case entities.SUBMISSION:

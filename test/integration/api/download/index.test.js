@@ -8,7 +8,7 @@ const host = 'http://localhost';
 
 let token;
 
-test('should login and download the people file', async t => {
+test.skip('should login and download the people file', async t => {
   const login = await request(`${host}:${t.context.port}/auth`)
     .post('/token')
     .set('content-type', 'application/json')

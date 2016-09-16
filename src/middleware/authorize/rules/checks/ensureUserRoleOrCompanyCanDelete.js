@@ -1,13 +1,12 @@
 import { fetch } from 'redink';
 
-export default ({ token, ctx }) => {
+export default ({ ctx, token }) => {
   const { params } = ctx;
 
-  if (token.role) return true;
+  if (token.role === '1') return true;
 
   return fetch(params.table, params.id)
     .then(record => {
-      if (params.table === 'company' && record.id === token.id) return true;
       if (record.company && record.company.id === token.id) return true;
       return false;
     })

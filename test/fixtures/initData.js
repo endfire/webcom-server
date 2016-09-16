@@ -3,6 +3,7 @@ import * as types from '../../src/constants/entities';
 export default {
   test: {
     [types.USER]: [{
+      id: '1',
       name: 'Marsha',
       email: 'marsha@webcom.com',
       password: '$2a$10$McSj/jcx9csunmv47hp.9eJTwA2LLrs.hb115ccXzWZe6WE7KVo6G',
@@ -182,7 +183,7 @@ export default {
       published: true,
       brand: {
         id: '1',
-        archived: true,
+        archived: false,
       },
       submissions: [],
       fields: [{

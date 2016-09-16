@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { create, update, archive } from 'redink';
-import { invalidRequestError, invalidMethodError } from '../utils/';
+import { invalidRequestError, invalidMethodError, bcryptHash } from '../utils/';
 
 /**
  * Writes data to the database based on data and id.
@@ -15,6 +15,11 @@ export default (ctx, next) => {
   const { method } = request;
   let dispatch;
 
+  const handleHash = hashedPassword => {
+    request.body.password = hashedPassword;
+    return create(table, request.body);
+  };
+
   const handleSuccess = result => {
     request.body = result;
     return request;
@@ -24,9 +29,16 @@ export default (ctx, next) => {
 
   switch (method) {
     case 'POST':
-      dispatch = create(table, request.body)
-        .then(handleSuccess)
-        .catch(handleWriteError);
+      if (table === 'user' || table === 'company') {
+        dispatch = bcryptHash(request.body.password)
+          .then(handleHash)
+          .then(handleSuccess)
+          .catch(handleWriteError);
+      } else {
+        dispatch = create(table, request.body)
+          .then(handleSuccess)
+          .catch(handleWriteError);
+      }
       break;
     case 'PATCH':
       dispatch = update(table, id, request.body)

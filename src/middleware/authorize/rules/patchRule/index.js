@@ -26,7 +26,7 @@ export default (ctx) => {
 
     default:
       return Promise.reject({
-        message: `Not authorized to PATCH table  '${table}'.`,
+        message: `Not authorized to PATCH table '${table}'.`,
       });
   }
 };

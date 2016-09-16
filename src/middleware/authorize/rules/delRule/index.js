@@ -1,6 +1,6 @@
 import { validateRequestWithToken } from '../utils/';
 import * as entities from '../../../../constants/entities';
-import { ensureUserRole, ensureUserRoleOrCompany } from '../checks/';
+import { ensureUserCanDelete, ensureUserRoleOrCompanyCanDelete } from '../checks/';
 
 export default (ctx) => {
   const { request: { header }, params: { table } } = ctx;
@@ -17,12 +17,12 @@ export default (ctx) => {
     case entities.FIELD:
     case entities.PAYMENT:
     case entities.ITEM:
-      rules = [ensureUserRole];
+      rules = [ensureUserCanDelete];
       return validateRequestWithToken(rules, ctx, authorization);
 
     case entities.LISTING:
     case entities.PERSON:
-      rules = [ensureUserRoleOrCompany];
+      rules = [ensureUserRoleOrCompanyCanDelete];
       return validateRequestWithToken(rules, ctx, authorization);
 
     default:
