@@ -32,6 +32,7 @@ export default {
       approved: true,
       createdOn: true,
       meta: true,
+      webcomID: true,
     },
     relationships: {
       listings: getRelationship(MANY, types.LISTING, 'company'),
@@ -45,6 +46,7 @@ export default {
       brandId: true,
       createdOn: true,
       meta: true,
+      webcomID: true,
     },
     relationships: {
       company: getRelationship(BELONGS, types.COMPANY, 'listings'),
@@ -62,6 +64,7 @@ export default {
       priority: true,
       createdOn: true,
       meta: true,
+      webcomID: true,
     },
     relationships: {
       company: getRelationship(BELONGS, types.COMPANY, 'ads'),
@@ -76,6 +79,7 @@ export default {
       job: true,
       createdOn: true,
       meta: true,
+      webcomID: true,
     },
     relationships: {
       company: getRelationship(BELONGS, types.COMPANY, 'people'),
@@ -84,6 +88,7 @@ export default {
   [types.BRAND]: {
     attributes: {
       name: true,
+      url: true,
       image: true,
       background: true,
       text: true,
@@ -92,6 +97,7 @@ export default {
       obgDescription: true,
       createdOn: true,
       meta: true,
+      webcomID: true,
     },
     relationships: {
       forms: getRelationship(MANY, types.FORM, 'brand'),
@@ -104,6 +110,7 @@ export default {
       heading: true,
       createdOn: true,
       meta: true,
+      webcomID: true,
     },
     relationships: {
       brand: getRelationship(BELONGS, types.BRAND, 'categories'),
