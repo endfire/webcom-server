@@ -1,4 +1,3 @@
-import { RedinkHttpError } from 'redink-errors';
 import { exportPeople, exportCompanies, exportSubmissions } from './export';
 
 export default (ctx, next) => {
@@ -6,11 +5,12 @@ export default (ctx, next) => {
   const { table, id } = params;
   let dispatch;
 
-  const handleError = err => {
-    throw new RedinkHttpError(400, `Error in download middleware: ${err.message}`);
+  const handleError = (err) => {
+    console.log(err);
+    // throw new RedinkHttpError(400, `Error in download middleware: ${err.message}`);
   };
 
-  if (!table) handleError(new RedinkHttpError(400, 'Table is undefined.'));
+  if (!table) handleError(new Error('Table is undefined.'));
 
   response.set({
     'Content-Type': 'application/vnd.openxmlformats',

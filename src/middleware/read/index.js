@@ -14,7 +14,21 @@ export default (ctx, next) => {
   const { params, request } = ctx;
   const { table, id, field } = params;
   const { method, querystring } = request;
+  const pagination = {
+    limit: 80,
+    skip: 0,
+  };
+
   let dispatch;
+
+  const query = qs.parse(querystring);
+
+  if (query.limit || query.skip) {
+    pagination.limit = Number(query.limit);
+    pagination.skip = Number(query.skip);
+    delete query.limit;
+    delete query.skip;
+  }
 
   if (method !== 'GET') {
     invalidMethodError(`Invalid method expecting GET but got '${method}'`);
@@ -27,9 +41,9 @@ export default (ctx, next) => {
 
   const handleReadError = err => invalidRequestError(err.message);
 
-  if (field) dispatch = fetchRelated(table, id, field);
+  if (field) dispatch = fetchRelated(table, id, field, query, pagination);
   else if (id) dispatch = fetch(table, id);
-  else dispatch = find(table, qs.parse(querystring));
+  else dispatch = find(table, query, pagination);
 
   return dispatch
     .then(handleResponse)
