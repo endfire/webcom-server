@@ -166,6 +166,7 @@ export default {
       options: true,
       isRequired: true,
       createdOn: true,
+      priority: true,
       meta: true,
     },
     relationships: {
