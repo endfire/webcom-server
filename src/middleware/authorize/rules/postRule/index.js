@@ -19,6 +19,7 @@ export default (ctx) => {
     case entities.COMPANY:
     case entities.AD:
     case entities.PAYMENT:
+    case entities.ITEM:
       rules = [ensureUserRole];
       return validateRequestWithToken(rules, ctx, authorization);
 
