@@ -24,6 +24,19 @@ export default (ctx, next) => {
   switch (table) {
     case SUBMISSION: {
       // TODO: Check payment info or next()
+
+      if (!body.hasOwnProperty('items')) return next();
+
+      if (!body.payment.cardNumber) stripeError('Missing credit card number.');
+      if (!body.payment.expMonth) stripeError('Missing credit card expiration month.');
+      if (!body.payment.expYear) stripeError('Missing credit card expiration year.');
+      if (!body.payment.cardCvc) stripeError('Missing credit card cvc.');
+      if (!body.payment.amount) stripeError('Missing amount.');
+      if (!body.payment.firstName) stripeError('Missing payment first name.');
+      if (!body.payment.lastName) stripeError('Missing payment last name.');
+      if (!body.payment.email) stripeError('Missing payment email.');
+      if (!body.name) stripeError('Missing form name.');
+
       const charge = {
         number: body.payment.cardNumber,
         exp: `${body.payment.expMonth}${body.payment.expYear}`,
@@ -32,6 +45,7 @@ export default (ctx, next) => {
         firstName: body.payment.firstName,
         lastName: body.payment.lastName,
         email: body.payment.email,
+        description: body.name,
       };
 
       const handleSuccess = (res) => {
