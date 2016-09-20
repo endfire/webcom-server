@@ -13,6 +13,7 @@ export default (ctx) => {
     case entities.BRAND:
     case entities.CATEGORY:
     case entities.AD:
+    case entities.ITEM:
       // Check and ensure user is part of the practice.
       rules = [ensureUserRole];
       return validateRequestWithToken(rules, ctx, authorization);
