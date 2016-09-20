@@ -10,6 +10,7 @@ export default (ctx) => {
   switch (table) {
     case entities.COMPANY:
     case entities.BRAND:
+    case entities.FORM:
       rules = [verified];
       return validateRequestWithToken(rules, ctx, authorization);
 
