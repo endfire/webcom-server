@@ -38,6 +38,9 @@ export default (request) => {
     type: userType,
     filter: {
       email: body.email,
+      meta: {
+        archived: false,
+      },
     },
   };
 

@@ -1,14 +1,34 @@
 import { find } from 'redink';
 import { forEach } from 'lodash';
-import excel from 'excel-export';
 
 /**
- * Export companies table
+ * Export company table
  *
  **/
 export default () => {
   const fields = [
-
+    'id',
+    'name',
+    'street',
+    'city',
+    'state',
+    'zip',
+    'country',
+    'phone',
+    'fax',
+    'url',
+    'email',
+    'description',
+    'lastContacted',
+    'approved',
+    'createdOn',
+    'webcomID',
+    'lastUpdated',
+    'yearEstablished',
+    'numberEmployees',
+    'annualRevenue',
+    'businessOwnership',
+    'contactInfo',
   ];
 
   const config = {
@@ -21,20 +41,18 @@ export default () => {
     type: 'general',
   }));
 
-  return new Promise(resolve => {
+  const findMore = (limit, skip) => {
     let record;
     let input;
 
-    find('person')
+    return find('company', {}, { limit, skip })
       .then(rows => {
         forEach(rows, row => {
           record = [];
 
           forEach(fields, field => {
             if (row[field]) {
-              input = typeof row[field] === 'object'
-                ? row[field].name
-                : row[field];
+              input = row[field];
 
               record.push(input);
             } else record.push('null');
@@ -42,10 +60,20 @@ export default () => {
 
           config.rows.push(record);
         });
-      })
-      .then(() => {
-        const exportFile = excel.execute(config);
-        resolve(new Buffer(exportFile, 'binary'));
+
+        return rows.count;
       });
-  });
+  };
+
+  async function main() {
+    const count = await findMore(1000, 0);
+
+    for (let i = 1000; i < count; i += 1000) {
+      await findMore(1000, i);
+    }
+
+    return Promise.resolve(config);
+  }
+
+  return main();
 };

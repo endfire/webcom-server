@@ -1,6 +1,14 @@
 import { stripeError } from '../utils';
 import { SUBMISSION } from '../../constants/entities';
 import authNet from 'simple-authorizenet';
+import email from 'emailjs/email';
+
+const server = email.server.connect({
+  user: 'brewercalvinj@gmail.com',
+  password: process.env.EMAIL_PASSWORD,
+  host: 'smtp.gmail.com',
+  tls: { ciphers: 'SSLv3' },
+});
 
 /**
  * Checks to see if incoming requests require Stripe.
@@ -23,8 +31,6 @@ export default (ctx, next) => {
 
   switch (table) {
     case SUBMISSION: {
-      // TODO: Check payment info or next()
-
       if (!body.hasOwnProperty('items')) return next();
 
       if (!body.payment.cardNumber) stripeError('Missing credit card number.');
@@ -53,10 +59,52 @@ export default (ctx, next) => {
           stripeError('There was a problem processing your transaction.');
         }
         body.transactionID = res.transactionResponse.transId;
+        return body.transactionID;
+      };
+
+      const sendEmails = (transactionID) => {
+        const message	= {
+          text:	'Thank you for your payment!',
+          from:	'Webcom Communications',
+          to:	`${body.payment.firstName} ${body.payment.lastName} <${body.payment.email}>`,
+          cc: `Recipient One <${body.recipientOne}>,
+               Recipient Two <${body.recipientTwo}>,
+               Recipient Three <${body.recipientThree}>`,
+          subject: `Receipt for ${body.name}`,
+          attachment: [{
+            data: `<html>
+              <p>
+                ${body.payment.firstName} ${body.payment.firstName},
+              </p>
+              <p>
+                Thank you for your payment from ${body.name}.
+                Your transaction ID is ${transactionID}.
+              </p>
+              <p>
+                If you have any questions about your purchase,
+                please contact Webcom Communications at (720) 528-3770.
+              </p>
+              <p>
+                Thanks,<br />
+                Webcom Communications<br />
+                7355 E Orchard Rd<br />
+                Greenwood Village, CO 80111
+              </p>
+            </html>`,
+            alternative: true,
+          }],
+        };
+
+        return new Promise((resolve) => {
+          server.send(message, (err, mesRes) => {
+            resolve(err || mesRes);
+          });
+        });
       };
 
       return authNet(charge)
         .then(handleSuccess)
+        .then(sendEmails)
         .then(next)
         .catch(handleAuthNetError);
     }

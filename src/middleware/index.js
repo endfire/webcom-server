@@ -10,4 +10,4 @@ import start from './start';
 export const writeMiddleware = [start, authorize, authNet, write];
 export const readMiddleware = [start, authorize, read];
 export const authenticateMiddleware = [start, authenticate];
-export const downloadMiddleware = [authorize, download];
+export const downloadMiddleware = [start, authorize, download];

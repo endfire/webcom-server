@@ -147,6 +147,9 @@ export default {
       didInitialize: true,
       createdOn: true,
       meta: true,
+      recipientOne: true,
+      recipientTwo: true,
+      recipientThree: true,
     },
     relationships: {
       brand: getRelationship(BELONGS, types.BRAND, 'forms'),
@@ -206,6 +209,7 @@ export default {
       price: true,
       quantity: true,
       description: true,
+      priority: true,
       label: true,
       createdOn: true,
       meta: true,

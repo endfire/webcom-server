@@ -33,7 +33,11 @@ export default {
     get: readMiddleware,
   },
 
-  '/api/download/:table': {
-    post: downloadMiddleware,
+  '/download/:downloadTable': {
+    get: downloadMiddleware,
+  },
+
+  '/download/:downloadTable/:id': {
+    get: downloadMiddleware,
   },
 };

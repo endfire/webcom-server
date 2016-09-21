@@ -39,17 +39,24 @@ test.only('should post a submission', async t => {
       label: 'email',
     }],
     payment: {
-      amount: 2.99,
+      amount: 29.99,
       cardNumber: '4242424242424242',
       expMonth: '08',
       expYear: '22',
       cardCvc: '999',
-      firstName: 'Billy',
+      firstName: 'James',
       lastName: 'Jones',
-      email: 'billy@jones.com',
+      email: 'cbrewer@coervercolorado.com',
     },
+    items: [{
+      value: 'CJ',
+    }],
     createdOn: 'Today',
     form: '1',
+    name: 'Test form',
+    recipientOne: 'brewercalvinj@gmail.com',
+    recipientTwo: 'brewercalvinj@gmail.com',
+    recipientThree: 'brewercalvinj@gmail.com',
   };
 
   const createSubmission = await request(`${host}:${t.context.port}/api`)

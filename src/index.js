@@ -2,6 +2,8 @@
 import redink from 'redink';
 import schemas from './schemas';
 import app from './application';
+require('babel-core/register');
+require('babel-polyfill');
 
 const {
     RETHINKDB_URL: host,

@@ -1,40 +1,59 @@
 import { exportPeople, exportCompanies, exportSubmissions } from './export';
+import { invalidRequestError } from '../utils';
+import excel from 'excel-export';
+import email from 'emailjs/email';
+
+const server = email.server.connect({
+  user: 'brewercalvinj@gmail.com',
+  password: process.env.EMAIL_PASSWORD,
+  host: 'smtp.gmail.com',
+  tls: { ciphers: 'SSLv3' },
+});
 
 export default (ctx, next) => {
-  const { params, response } = ctx;
-  const { table, id } = params;
+  const { params, request } = ctx;
+  const { downloadTable, id } = params;
   let dispatch;
 
-  const handleError = (err) => {
-    console.log(err);
-    // throw new RedinkHttpError(400, `Error in download middleware: ${err.message}`);
+  // const handleError = (err) => invalidRequestError(err.message);
+
+  const handleConfig = (config, type) => {
+    const exportFile = excel.execute(config);
+
+    const message	= {
+      text:	`Download of ${type}`,
+      from:	'Endfire',
+      to:	'CJ Brewer <brewercalvinj@gmail.com>',
+      subject:	`${type} download`,
+      attachment: [{
+        data: new Buffer(exportFile, 'binary'),
+        name: `${type}.xlsx`,
+      }],
+    };
+
+    server.send(message, (err) => (
+      request.body = (err || { message: 'Please check your email for the download.' })
+    ));
   };
 
-  if (!table) handleError(new Error('Table is undefined.'));
-
-  response.set({
-    'Content-Type': 'application/vnd.openxmlformats',
-    'Content-Disposition': 'attachment; filename=test.xlsx',
-  });
-
-  switch (table) {
+  switch (downloadTable) {
     case 'people':
-      dispatch = exportPeople();
+      dispatch = exportPeople()
+        .then(config => handleConfig(config, 'People'));
       break;
 
     case 'companies':
-      dispatch = exportCompanies();
+      dispatch = exportCompanies()
+        .then(config => handleConfig(config, 'Companies'));
       break;
 
-    case 'submissions':
+    case 'form':
       dispatch = exportSubmissions(id);
       break;
 
     default:
-      handleError(new RedinkHttpError(400, `Download table '${table}' is not supported.`));
+      invalidRequestError(`Download table '${downloadTable}' is not supported.`);
   }
 
-  return dispatch
-    .then(buffer => (response.body = buffer))
-    .then(next);
+  return dispatch.then(next);
 };

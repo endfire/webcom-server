@@ -14,10 +14,11 @@ import {
   getRelatedRule,
   patchRule,
   postRule,
+  downloadRule,
 } from './rules/';
 
 export default (ctx, next) => {
-  const { params: { id, field }, request: { method } } = ctx;
+  const { params: { id, field, downloadTable }, request: { method } } = ctx;
   let dispatch;
 
   const handleAuthorizeError = err => authorizationError(err.message);
@@ -35,6 +36,7 @@ export default (ctx, next) => {
     case GET:
       if (field) dispatch = getRelatedRule(ctx);
       else if (id) dispatch = getOneRule(ctx);
+      else if (downloadTable) dispatch = downloadRule(ctx);
       else dispatch = getAllRule(ctx);
       break;
 
