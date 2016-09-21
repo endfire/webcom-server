@@ -4,7 +4,7 @@ import excel from 'excel-export';
 import email from 'emailjs/email';
 
 const server = email.server.connect({
-  user: 'brewercalvinj@gmail.com',
+  user: 'infowebcomcommunications@gmail.com',
   password: process.env.EMAIL_PASSWORD,
   host: 'smtp.gmail.com',
   tls: { ciphers: 'SSLv3' },
@@ -22,7 +22,7 @@ export default (ctx, next) => {
 
     const message	= {
       text:	`Download of ${type}`,
-      from:	'Endfire',
+      from:	'Webcom Communications <infowebcomcommunications@gmail.com>',
       to:	'CJ Brewer <brewercalvinj@gmail.com>',
       subject:	`${type} download`,
       attachment: [{
@@ -31,9 +31,14 @@ export default (ctx, next) => {
       }],
     };
 
-    server.send(message, (err) => (
-      request.body = (err || { message: 'Please check your email for the download.' })
-    ));
+    return new Promise((resolve) => {
+      server.send(message, (err) => {
+        console.log('Sent');
+        console.log(err);
+        request.body = (err || { message: 'Please check your email for the download.' });
+        resolve();
+      });
+    });
   };
 
   switch (downloadTable) {

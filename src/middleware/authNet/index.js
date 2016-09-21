@@ -4,7 +4,7 @@ import authNet from 'simple-authorizenet';
 import email from 'emailjs/email';
 
 const server = email.server.connect({
-  user: 'brewercalvinj@gmail.com',
+  user: 'infowebcomcommunications@gmail.com',
   password: process.env.EMAIL_PASSWORD,
   host: 'smtp.gmail.com',
   tls: { ciphers: 'SSLv3' },
@@ -65,7 +65,7 @@ export default (ctx, next) => {
       const sendEmails = (transactionID) => {
         const message	= {
           text:	'Thank you for your payment!',
-          from:	'Webcom Communications',
+          from:	'Webcom Communications <infowebcomcommunications@gmail.com>',
           to:	`${body.payment.firstName} ${body.payment.lastName} <${body.payment.email}>`,
           cc: `Recipient One <${body.recipientOne}>,
                Recipient Two <${body.recipientTwo}>,

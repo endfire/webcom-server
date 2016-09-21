@@ -41,7 +41,8 @@ export default (ctx, next) => {
       break;
 
     case POST:
-      dispatch = postRule(ctx);
+      if (downloadTable) dispatch = downloadRule(ctx);
+      else dispatch = postRule(ctx);
       break;
 
     case PATCH:

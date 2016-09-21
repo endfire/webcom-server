@@ -160,6 +160,7 @@ export default {
   },
   [types.SUBMISSION]: {
     attributes: {
+      name: true,
       fields: true,
       items: true,
       payment: true,
