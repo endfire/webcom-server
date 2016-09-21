@@ -2,6 +2,7 @@ import { stripeError } from '../utils';
 import { SUBMISSION } from '../../constants/entities';
 import authNet from 'simple-authorizenet';
 import email from 'emailjs/email';
+import { forEach } from 'lodash';
 
 const server = email.server.connect({
   user: 'infowebcomcommunications@gmail.com',
@@ -37,17 +38,24 @@ export default (ctx, next) => {
       if (!body.payment.expMonth) stripeError('Missing credit card expiration month.');
       if (!body.payment.expYear) stripeError('Missing credit card expiration year.');
       if (!body.payment.cardCvc) stripeError('Missing credit card cvc.');
-      if (!body.payment.amount) stripeError('Missing amount.');
       if (!body.payment.firstName) stripeError('Missing payment first name.');
       if (!body.payment.lastName) stripeError('Missing payment last name.');
       if (!body.payment.email) stripeError('Missing payment email.');
+      if (!body.items) stripeError('Missing payment items.');
       if (!body.name) stripeError('Missing form name.');
+
+      let amount;
+      amount = 0;
+
+      forEach(body.items, item => {
+        amount += (Number(item.quantity) * Number(item.price));
+      });
 
       const charge = {
         number: body.payment.cardNumber,
         exp: `${body.payment.expMonth}${body.payment.expYear}`,
         code: body.payment.cardCvc,
-        amount: body.payment.amount,
+        amount,
         firstName: body.payment.firstName,
         lastName: body.payment.lastName,
         email: body.payment.email,

@@ -39,7 +39,6 @@ test.only('should post a submission', async t => {
       label: 'email',
     }],
     payment: {
-      amount: 29.99,
       cardNumber: '4242424242424242',
       expMonth: '08',
       expYear: '22',
@@ -49,7 +48,14 @@ test.only('should post a submission', async t => {
       email: 'cbrewer@coervercolorado.com',
     },
     items: [{
-      value: 'CJ',
+      quantity: '0',
+      price: '30',
+    }, {
+      quantity: '2',
+      price: '20',
+    }, {
+      quantity: '1',
+      price: '70',
     }],
     createdOn: 'Today',
     form: '1',
