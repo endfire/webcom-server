@@ -67,6 +67,10 @@ export default (ctx, next) => {
           stripeError('There was a problem processing your transaction.');
         }
         body.transactionID = res.transactionResponse.transId;
+        delete body.payment.cardNumber;
+        delete body.payment.expMonth;
+        delete body.payment.expYear;
+        delete body.payment.cardCvc;
         return body.transactionID;
       };
 
