@@ -167,6 +167,9 @@ export default {
       transactionID: true,
       createdOn: true,
       meta: true,
+      recipientOne: true,
+      recipientTwo: true,
+      recipientThree: true,
     },
     relationships: {
       form: getRelationship(BELONGS, types.FORM, 'submissions'),
