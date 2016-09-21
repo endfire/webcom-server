@@ -2,7 +2,7 @@
   "name": "webcom-server",
   "version": "0.1.0",
   "description": "Webcom's backend.",
-  "main": "index.js",
+  "main": "build/index.js",
   "authors": [
     "Dylan Slack <dylanslack@gmail.com> (http://www.dylanslack.me)",
     "CJ Brewer <brewercalvinj@gmail.com>"
@@ -36,7 +36,7 @@
       "command": "npm run clean && nyc ava && nyc report --reporter=html && open -a \"Google Chrome\" coverage/index.html"
     },
     "start": {
-      "command": "npm run build && node build"
+      "command": "npm run build:prod && node build"
     },
     "test": {
       "command": "npm run test:lint && npm run test:src"
