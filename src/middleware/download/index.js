@@ -23,7 +23,7 @@ export default (ctx, next) => {
     const message	= {
       text:	`Download of ${type}`,
       from:	'Webcom Communications <infowebcomcommunications@gmail.com>',
-      to:	'CJ Brewer <brewercalvinj@gmail.com>',
+      to:	'Marc Vang <marcv@webcomcommunications.com>',
       subject:	`${type} download`,
       attachment: [{
         data: new Buffer(exportFile, 'binary'),
@@ -33,8 +33,6 @@ export default (ctx, next) => {
 
     return new Promise((resolve) => {
       server.send(message, (err) => {
-        console.log('Sent');
-        console.log(err);
         request.body = (err || { message: 'Please check your email for the download.' });
         resolve();
       });
