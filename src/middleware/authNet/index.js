@@ -50,6 +50,8 @@ export default (ctx, next) => {
         amount += (Number(item.quantity) * Number(item.price));
       });
 
+      if (amount <= 0) stripeError('Please purchase at least one item.');
+
       const charge = {
         number: body.payment.cardNumber,
         exp: `${body.payment.expMonth}${body.payment.expYear}`,
