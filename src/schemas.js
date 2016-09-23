@@ -23,6 +23,8 @@ export default {
       oldName: true,
       street: true,
       oldStreet: true,
+      streetTwo: true,
+      oldStreetTwo: true,
       city: true,
       oldCity: true,
       state: true,
@@ -150,6 +152,7 @@ export default {
       recipientOne: true,
       recipientTwo: true,
       recipientThree: true,
+      description: true,
     },
     relationships: {
       brand: getRelationship(BELONGS, types.BRAND, 'forms'),
