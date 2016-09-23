@@ -1,6 +1,5 @@
-import { stripeError } from '../utils';
+import { stripeError, authNet } from '../utils';
 import { SUBMISSION } from '../../constants/entities';
-import authNet from 'simple-authorizenet';
 import email from 'emailjs/email';
 import { forEach } from 'lodash';
 
@@ -60,10 +59,18 @@ export default (ctx, next) => {
         lastName: body.payment.lastName,
         email: body.payment.email,
         description: body.name,
+        company: body.payment.company,
+        address: body.payment.address,
+        city: body.payment.city,
+        state: body.payment.state,
+        zip: body.payment.zip,
+        country: body.payment.country,
+        phone: body.payment.phone,
       };
 
       const handleSuccess = (res) => {
         if (res.messages.resultCode === 'Error') {
+          console.log(res.messages);
           stripeError('There was a problem processing your transaction.');
         }
         body.transactionID = res.transactionResponse.transId;

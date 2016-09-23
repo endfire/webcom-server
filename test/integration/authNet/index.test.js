@@ -46,6 +46,12 @@ test.only('should post a submission', async t => {
       firstName: 'James',
       lastName: 'Jones',
       email: 'cbrewer@coervercolorado.com',
+      address: '123 Test Ave.',
+      city: 'Centennial',
+      state: 'CO',
+      zip: '80122',
+      country: 'USA',
+      phone: '123456789',
     },
     items: [{
       quantity: '0',

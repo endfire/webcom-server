@@ -205,6 +205,13 @@ export default {
       email: true,
       createdOn: true,
       meta: true,
+      company: true,
+      address: true,
+      city: true,
+      state: true,
+      zip: true,
+      country: true,
+      phone: true,
     },
     relationships: {
       items: getRelationship(MANY, types.ITEM, 'payment'),
