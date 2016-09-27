@@ -120,7 +120,7 @@ export default {
       obg: true,
       obgDescription: true,
       basicPrice: true,
-      enchancedPrice: true,
+      enhancedPrice: true,
       deluxePrice: true,
       createdOn: true,
       meta: true,
