@@ -55,6 +55,8 @@ export default {
       annualRevenue: true,
       businessOwnership: true,
       contactInfo: true,
+      contactPerson: true,
+      lastOnlinePurchase: true,
     },
     relationships: {
       listings: getRelationship(MANY, types.LISTING, 'company'),

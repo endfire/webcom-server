@@ -14,20 +14,15 @@ export default (ctx, next) => {
   const { params, request } = ctx;
   const { table, id, field } = params;
   const { method, querystring } = request;
-  const pagination = {
-    limit: 80,
-    skip: 0,
-  };
+  let sideload = true;
 
   let dispatch;
 
   const query = qs.parse(querystring);
 
-  if (query.limit || query.skip) {
-    pagination.limit = Number(query.limit);
-    pagination.skip = Number(query.skip);
-    delete query.limit;
-    delete query.skip;
+  if (query.sideload) {
+    sideload = query.sideload;
+    delete query.sideload;
   }
 
   if (method !== 'GET') {
@@ -41,9 +36,9 @@ export default (ctx, next) => {
 
   const handleReadError = err => invalidRequestError(err.message);
 
-  if (field) dispatch = fetchRelated(table, id, field, query, pagination);
+  if (field) dispatch = fetchRelated(table, id, field, query);
   else if (id) dispatch = fetch(table, id);
-  else dispatch = find(table, query, pagination);
+  else dispatch = find(table, query, sideload);
 
   return dispatch
     .then(handleResponse)
