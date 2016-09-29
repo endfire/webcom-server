@@ -75,6 +75,9 @@ export default ({
             cardCode: code,
           },
         },
+        order: {
+          description,
+        },
         customer: {
           email,
         },
@@ -88,7 +91,6 @@ export default ({
           zip,
           country,
           phoneNumber: phone,
-          faxNumber: description,
         },
       },
     },
