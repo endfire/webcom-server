@@ -95,7 +95,7 @@ export default (ctx, next) => {
           attachment: [{
             data: `<html>
               <p>
-                ${body.payment.firstName} ${body.payment.firstName},
+                ${body.payment.firstName} ${body.payment.lastName},
               </p>
               <p>
                 Thank you for your payment from ${body.name}.
@@ -106,7 +106,7 @@ export default (ctx, next) => {
                 please contact Webcom Communications at (720) 528-3770.
               </p>
               <p>
-                Thanks,<br />
+                Thanks,<br /><br />
                 Webcom Communications<br />
                 7355 E Orchard Rd<br />
                 Greenwood Village, CO 80111
