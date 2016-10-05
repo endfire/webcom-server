@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { fetch, find, fetchRelated } from 'redink';
-import { invalidRequestError, invalidMethodError } from '../utils/';
+import { invalidRequestError, invalidMethodError, queryType } from '../utils/';
 import qs from 'qs';
 
 /**
@@ -14,15 +14,16 @@ export default (ctx, next) => {
   const { params, request } = ctx;
   const { table, id, field } = params;
   const { method, querystring } = request;
-  let sideload = true;
-
-  let dispatch;
 
   const query = qs.parse(querystring);
+  const { options } = query;
 
-  if (query.sideload) {
-    sideload = query.sideload;
-    delete query.sideload;
+  let dispatch;
+  let redinkOptions;
+
+  if (options) {
+    redinkOptions = queryType(options);
+    delete query.options;
   }
 
   if (method !== 'GET') {
@@ -36,9 +37,9 @@ export default (ctx, next) => {
 
   const handleReadError = err => invalidRequestError(err.message);
 
-  if (field) dispatch = fetchRelated(table, id, field, query);
-  else if (id) dispatch = fetch(table, id);
-  else dispatch = find(table, query, sideload);
+  if (field) dispatch = fetchRelated(table, id, field, redinkOptions || {});
+  else if (id) dispatch = fetch(table, id, redinkOptions || {});
+  else dispatch = find(table, query, redinkOptions || {});
 
   return dispatch
     .then(handleResponse)
