@@ -1,14 +1,7 @@
 import { stripeError, authNet } from '../utils';
 import { SUBMISSION } from '../../constants/entities';
-import email from 'emailjs/email';
 import { forEach } from 'lodash';
-
-const server = email.server.connect({
-  user: 'infowebcomcommunications@gmail.com',
-  password: process.env.EMAIL_PASSWORD,
-  host: 'smtp.gmail.com',
-  tls: { ciphers: 'SSLv3' },
-});
+import sendEmails from './emails';
 
 /**
  * Checks to see if incoming requests require Stripe.
@@ -31,7 +24,10 @@ export default (ctx, next) => {
 
   switch (table) {
     case SUBMISSION: {
-      if (!body.hasOwnProperty('items')) return next();
+      if (!body.hasOwnProperty('items')) {
+        return sendEmails('N/A', body)
+          .then(next);
+      }
 
       if (!body.payment.cardNumber) stripeError('Missing credit card number.');
       if (!body.payment.expMonth) stripeError('Missing credit card expiration month.');
@@ -75,57 +71,22 @@ export default (ctx, next) => {
           console.log(res.messages);
           stripeError('There was a problem processing your transaction.');
         }
+
         body.transactionID = res.transactionResponse.transId;
+
         delete body.payment.cardNumber;
         delete body.payment.expMonth;
         delete body.payment.expYear;
         delete body.payment.cardCvc;
+
         return body.transactionID;
       };
 
-      const sendEmails = (transactionID) => {
-        const message	= {
-          text:	'Thank you for your payment!',
-          from:	'Webcom Communications <infowebcomcommunications@gmail.com>',
-          to:	`${body.payment.firstName} ${body.payment.lastName} <${body.payment.email}>`,
-          cc: `Recipient One <${body.recipientOne}>,
-               Recipient Two <${body.recipientTwo}>,
-               Recipient Three <${body.recipientThree}>`,
-          subject: `Receipt for ${body.name}`,
-          attachment: [{
-            data: `<html>
-              <p>
-                ${body.payment.firstName} ${body.payment.lastName},
-              </p>
-              <p>
-                Thank you for your payment from ${body.name}.
-                Your transaction ID is ${transactionID}.
-              </p>
-              <p>
-                If you have any questions about your purchase,
-                please contact Webcom Communications at (720) 528-3770.
-              </p>
-              <p>
-                Thanks,<br /><br />
-                Webcom Communications<br />
-                7355 E Orchard Rd<br />
-                Greenwood Village, CO 80111
-              </p>
-            </html>`,
-            alternative: true,
-          }],
-        };
-
-        return new Promise((resolve) => {
-          server.send(message, (err, mesRes) => {
-            resolve(err || mesRes);
-          });
-        });
-      };
+      const handleEmail = (transactionID) => sendEmails(transactionID, body);
 
       return authNet(charge)
         .then(handleSuccess)
-        .then(sendEmails)
+        .then(handleEmail)
         .then(next)
         .catch(handleAuthNetError);
     }
