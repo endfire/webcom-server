@@ -80,10 +80,12 @@ export default () => {
   async function main(i) {
     const count = await findMore(10000, i);
 
-    if (count < 10000) main((i += 10000));
+    if (count < 10000) {
+      const exportFile = excel.execute(config);
+      return Promise.resolve(new Buffer(exportFile, 'binary'));
+    }
 
-    const exportFile = excel.execute(config);
-    return Promise.resolve(new Buffer(exportFile, 'binary'));
+    return main((i += 10000));
   }
 
   return main(0);
