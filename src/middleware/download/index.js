@@ -19,11 +19,11 @@ export default (ctx, next) => {
 
   switch (downloadTable) {
     case 'people':
-      dispatch = exportPeople(counter || 0);
+      dispatch = exportPeople(Number(counter) || 0);
       break;
 
     case 'companies':
-      dispatch = exportCompanies(counter || 0);
+      dispatch = exportCompanies(Number(counter) || 0);
       break;
 
     case 'form':
