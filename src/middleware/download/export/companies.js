@@ -6,7 +6,7 @@ import excel from 'excel-export';
  * Export company table
  *
  **/
-export default () => {
+export default (counter) => {
   const fields = [
     'name',
     'street',
@@ -76,17 +76,12 @@ export default () => {
       });
   };
 
-  /* eslint-disable no-param-reassign */
   async function main(i) {
-    const count = await findMore(10000, i);
+    await findMore(10000, i);
 
-    if (count < 10000) {
-      const exportFile = excel.execute(config);
-      return Promise.resolve(new Buffer(exportFile, 'binary'));
-    }
-
-    return main((i += 10000));
+    const exportFile = excel.execute(config);
+    return Promise.resolve(new Buffer(exportFile, 'binary'));
   }
 
-  return main(0);
+  return main(counter);
 };

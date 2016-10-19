@@ -1,9 +1,15 @@
 import { exportPeople, exportCompanies, exportSubmissions } from './export';
 import { invalidRequestError } from '../utils';
+import qs from 'qs';
 
 export default (ctx, next) => {
-  const { params, response } = ctx;
+  const { params, response, request } = ctx;
   const { downloadTable, id } = params;
+  const { querystring } = request;
+
+  const query = qs.parse(querystring);
+  const { counter } = query;
+
   let dispatch;
 
   response.set({
@@ -13,11 +19,11 @@ export default (ctx, next) => {
 
   switch (downloadTable) {
     case 'people':
-      dispatch = exportPeople();
+      dispatch = exportPeople(counter || 0);
       break;
 
     case 'companies':
-      dispatch = exportCompanies();
+      dispatch = exportCompanies(counter || 0);
       break;
 
     case 'form':
