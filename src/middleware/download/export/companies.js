@@ -1,5 +1,6 @@
 import { find } from 'redink';
 import { forEach } from 'lodash';
+import excel from 'excel-export';
 
 /**
  * Export company table
@@ -7,9 +8,9 @@ import { forEach } from 'lodash';
  **/
 export default () => {
   const fields = [
-    'id',
     'name',
     'street',
+    'streetTwo',
     'city',
     'state',
     'zip',
@@ -29,6 +30,8 @@ export default () => {
     'annualRevenue',
     'businessOwnership',
     'contactInfo',
+    'contactPerson',
+    'lastOnlinePurchase',
   ];
 
   const config = {
@@ -45,7 +48,15 @@ export default () => {
     let record;
     let input;
 
-    return find('company', {}, { limit, skip })
+    return find('company', {}, {
+      limit,
+      skip,
+      without: {
+        people: true,
+        listings: true,
+        ads: true,
+      },
+    })
       .then(rows => {
         forEach(rows, row => {
           record = [];
@@ -61,18 +72,20 @@ export default () => {
           config.rows.push(record);
         });
 
-        return rows.count;
+        return rows.length;
       });
   };
 
   async function main() {
-    const count = await findMore(1000, 0);
+    await findMore(10000, 0);
 
-    for (let i = 1000; i < count; i += 1000) {
-      await findMore(1000, i);
+    for (let i = 10000; i < 200000; i += 10000) {
+      const count = await findMore(10000, i);
+      if (count < 10000) break;
     }
 
-    return Promise.resolve(config);
+    const exportFile = excel.execute(config);
+    return Promise.resolve(new Buffer(exportFile, 'binary'));
   }
 
   return main();

@@ -34,10 +34,10 @@ export default {
   },
 
   '/download/:downloadTable': {
-    post: downloadMiddleware,
+    get: downloadMiddleware,
   },
 
   '/download/:downloadTable/:id': {
-    post: downloadMiddleware,
+    get: downloadMiddleware,
   },
 };
