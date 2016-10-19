@@ -73,17 +73,15 @@ export default () => {
       });
   };
 
-  async function main() {
-    await findMore(10000, 0);
+  /* eslint-disable no-param-reassign */
+  async function main(i) {
+    const count = await findMore(10000, i);
 
-    for (let i = 10000; i < 200000; i += 10000) {
-      const count = await findMore(10000, i);
-      if (count < 10000) break;
-    }
+    if (count < 10000) main((i += 10000));
 
     const exportFile = excel.execute(config);
     return Promise.resolve(new Buffer(exportFile, 'binary'));
   }
 
-  return main();
+  return main(0);
 };
