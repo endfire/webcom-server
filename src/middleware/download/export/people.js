@@ -15,7 +15,6 @@ export default (counter) => {
     'title',
     'job',
     'lastUpdateDate',
-    'webcomID',
     'companyID',
   ];
 
@@ -36,11 +35,16 @@ export default (counter) => {
     return find('person', {}, {
       limit,
       skip,
-      without: {
+      pluck: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        title: true,
+        job: true,
+        lastUpdateDate: true,
         company: {
-          people: true,
-          listings: true,
-          ads: true,
+          id: true,
         },
       },
     })
@@ -56,14 +60,10 @@ export default (counter) => {
 
               record.push(input);
             } else if (field === 'companyID') {
-              input = row.company ? row.company.id : 'null';
+              input = row.company ? row.company.id : 'N/A';
 
               record.push(input);
-            } else if (field === 'companyWebcomID') {
-              input = row.company ? row.company.webcomID : 'null';
-
-              record.push(input);
-            } else record.push('null');
+            } else record.push('');
           });
 
           config.rows.push(record);

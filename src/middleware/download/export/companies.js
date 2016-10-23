@@ -8,6 +8,7 @@ import excel from 'excel-export';
  **/
 export default (counter) => {
   const fields = [
+    'id',
     'name',
     'street',
     'streetTwo',

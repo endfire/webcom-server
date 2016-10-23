@@ -16,9 +16,11 @@ export default (transactionID, info) => {
   let html;
 
   forEach(items || [], (item) => {
-    itemArray.push(
-      `${item.label} :: ${item.quantity} :: $${item.price * item.quantity}<br />`
-    );
+    if (item.quantity > 0) {
+      itemArray.push(
+        `${item.quantity} - ${item.label} for the price of $${item.price * item.quantity}<br />`
+      );
+    }
   });
 
   forEach(fields || [], (field) => {
@@ -43,7 +45,7 @@ export default (transactionID, info) => {
         ${payment.firstName} ${payment.lastName},
       </p>
       <p>
-        Thank you for your payment from ${info.name}.
+        Thank you for your payment.
         Your transaction ID is ${transactionID}.
       </p>
       <p>
@@ -64,6 +66,7 @@ export default (transactionID, info) => {
         country: ${payment.country}<br />
         phone: ${payment.phone}<br />
         ${fieldArray.join('')}
+      </p>
       <p>
         Thanks,<br /><br />
         Webcom Communications<br />
@@ -103,6 +106,7 @@ export default (transactionID, info) => {
       <p>
         <strong>Overview:</strong><br />
         ${fieldArray.join('')}
+      </p>
       <p>
         Thanks,<br /><br />
         Webcom Communications<br />

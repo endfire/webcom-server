@@ -20,6 +20,11 @@ export default (ctx, next) => {
     return create(table, request.body);
   };
 
+  const handleUpdateHash = hashedPassword => {
+    request.body.password = hashedPassword;
+    return update(table, id, request.body);
+  };
+
   const handleSuccess = result => {
     request.body = result;
     return request;
@@ -41,9 +46,16 @@ export default (ctx, next) => {
       }
       break;
     case 'PATCH':
-      dispatch = update(table, id, request.body)
-        .then(handleSuccess)
-        .catch(handleWriteError);
+      if (request.body.password) {
+        dispatch = bcryptHash(request.body.password)
+          .then(handleUpdateHash)
+          .then(handleSuccess)
+          .catch(handleWriteError);
+      } else {
+        dispatch = update(table, id, request.body)
+          .then(handleSuccess)
+          .catch(handleWriteError);
+      }
       break;
     case 'DELETE':
       dispatch = archive(table, id)

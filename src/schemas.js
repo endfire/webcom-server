@@ -149,6 +149,7 @@ export default {
   },
   [types.FORM]: {
     attributes: {
+      toggleHeading: true,
       name: true,
       didPublish: true,
       didInitialize: true,

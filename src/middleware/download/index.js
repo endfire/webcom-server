@@ -1,4 +1,4 @@
-import { exportPeople, exportCompanies, exportSubmissions } from './export';
+import { exportPeople, exportCompanies, exportSubmissions, exportBrand } from './export';
 import { invalidRequestError } from '../utils';
 import qs from 'qs';
 
@@ -26,6 +26,10 @@ export default (ctx, next) => {
       dispatch = exportCompanies(Number(counter) || 0);
       break;
 
+    case 'brand':
+      dispatch = exportBrand(id, Number(counter) || 0);
+      break;
+
     case 'form':
       dispatch = exportSubmissions(id);
       break;
@@ -35,9 +39,6 @@ export default (ctx, next) => {
   }
 
   return dispatch
-    .then(buffer => {
-      console.log('Done with people export!');
-      return (response.body = buffer);
-    })
+    .then(buffer => (response.body = buffer))
     .then(next);
 };
