@@ -218,6 +218,7 @@ export default {
       zip: true,
       country: true,
       phone: true,
+      billLater: true,
     },
     relationships: {
       items: getRelationship(MANY, types.ITEM, 'payment'),

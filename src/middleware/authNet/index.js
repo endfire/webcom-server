@@ -29,10 +29,18 @@ export default (ctx, next) => {
           .then(next);
       }
 
-      if (!body.payment.cardNumber) stripeError('Missing credit card number.');
-      if (!body.payment.expMonth) stripeError('Missing credit card expiration month.');
-      if (!body.payment.expYear) stripeError('Missing credit card expiration year.');
-      if (!body.payment.cardCvc) stripeError('Missing credit card cvc.');
+      if (
+        body.payment.billLaterSelected === '0' && !body.payment.cardNumber
+      ) stripeError('Missing credit card number.');
+      if (
+        body.payment.billLaterSelected === '0' && !body.payment.expMonth
+      ) stripeError('Missing credit card expiration month.');
+      if (
+        body.payment.billLaterSelected === '0' && !body.payment.expYear
+      ) stripeError('Missing credit card expiration year.');
+      if (
+        body.payment.billLaterSelected === '0' && !body.payment.cardCvc
+      ) stripeError('Missing credit card cvc.');
       if (!body.payment.firstName) stripeError('Missing payment first name.');
       if (!body.payment.lastName) stripeError('Missing payment last name.');
       if (!body.payment.email) stripeError('Missing payment email.');
@@ -84,11 +92,26 @@ export default (ctx, next) => {
 
       const handleEmail = (transactionID) => sendEmails(transactionID, body);
 
-      return authNet(charge)
-        .then(handleSuccess)
-        .then(handleEmail)
-        .then(next)
-        .catch(handleAuthNetError);
+      if (!body.payment.billLaterSelected || body.payment.billLaterSelected === '0') {
+        return authNet(charge)
+          .then(handleSuccess)
+          .then(handleEmail)
+          .then(next)
+          .catch(handleAuthNetError);
+      }
+
+      return Promise.resolve({
+        messages: {
+          resultCode: 'Success',
+        },
+        transactionResponse: {
+          transId: 'Bill me later',
+        },
+      })
+      .then(handleSuccess)
+      .then(handleEmail)
+      .then(next)
+      .catch(handleAuthNetError);
     }
 
     default:

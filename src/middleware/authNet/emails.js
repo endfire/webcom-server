@@ -36,7 +36,7 @@ export default (transactionID, info) => {
       cc: `Recipient One <${info.recipientOne}>,
            Recipient Two <${info.recipientTwo}>,
            Recipient Three <${info.recipientThree}>`,
-      subject: `Receipt for ${info.name}`,
+      subject: `Receipt for ${info.name} :: ${transactionID}`,
       attachment: [],
     };
 
@@ -46,7 +46,7 @@ export default (transactionID, info) => {
       </p>
       <p>
         Thank you for your payment.
-        Your transaction ID is ${transactionID}.
+        Your transaction ID is '${transactionID}'.
       </p>
       <p>
         If you have any questions about your purchase,
