@@ -5,7 +5,7 @@ import excel from 'excel-export';
 
 const query = (brandId, skip, conn) => (
   r.table('listing')
-    .filter({ brandId: 'cf676317-2062-42ee-82fe-f7d7c7ead88f' })
+    .filter({ brandId })
     .merge(row => ({
       categories: row('categories').map(cat => (
         r.table('category')
