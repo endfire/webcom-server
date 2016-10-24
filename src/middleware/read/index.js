@@ -39,7 +39,7 @@ export default (ctx, next) => {
 
   if (field) dispatch = fetchRelated(table, id, field, redinkOptions || {});
   else if (id) dispatch = fetch(table, id, redinkOptions || {});
-  else dispatch = find(table, query, redinkOptions || {});
+  else dispatch = find(table, queryType(query), redinkOptions || {});
 
   return dispatch
     .then(handleResponse)
