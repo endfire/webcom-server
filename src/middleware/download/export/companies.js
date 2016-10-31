@@ -24,7 +24,6 @@ export default (counter) => {
     'lastContacted',
     'approved',
     'createdOn',
-    'webcomID',
     'lastUpdated',
     'yearEstablished',
     'numberEmployees',
