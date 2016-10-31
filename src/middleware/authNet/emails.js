@@ -53,8 +53,11 @@ export default (transactionID, info) => {
         please contact Webcom Communications at (720) 528-3770.
       </p>
       <p>
-        <strong>Overview:</strong><br />
+        <strong>Items:</strong><br />
         ${itemArray.join('')}
+      </p>
+      <p>
+        <strong>Information:</strong><br />
         firstName: ${payment.firstName}<br />
         lastName: ${payment.lastName}<br />
         email: ${payment.email}<br />
@@ -104,7 +107,7 @@ export default (transactionID, info) => {
         please contact Webcom Communications at (720) 528-3770.
       </p>
       <p>
-        <strong>Overview:</strong><br />
+        <strong>Information:</strong><br />
         ${fieldArray.join('')}
       </p>
       <p>

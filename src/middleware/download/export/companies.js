@@ -65,9 +65,8 @@ export default (counter) => {
           forEach(fields, field => {
             if (row[field]) {
               input = row[field];
-
               record.push(input);
-            } else record.push('null');
+            } else record.push('');
           });
 
           config.rows.push(record);

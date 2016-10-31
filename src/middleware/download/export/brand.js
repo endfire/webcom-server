@@ -66,7 +66,7 @@ export default (brandId, counter) => {
                 : 'No categories';
 
               record.push(input);
-            } else record.push('null');
+            } else record.push('');
           });
 
           config.rows.push(record);
