@@ -73,7 +73,7 @@ export default (counter) => {
   );
 
   async function main(i) {
-    await findMore(100, i);
+    await findMore(10000, i);
 
     const exportFile = excel.execute(config);
     return Promise.resolve(new Buffer(exportFile, 'binary'));
