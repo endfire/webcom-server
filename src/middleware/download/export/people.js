@@ -25,14 +25,11 @@ export default (counter) => {
 
   config.cols = fields.map(field => ({
     caption: field,
-    type: 'general',
+    type: 'string',
   }));
 
-  const findMore = (limit, skip) => {
-    let record;
-    let input;
-
-    return find('person', {}, {
+  const findMore = (limit, skip) => (
+    find('person', {}, {
       limit,
       skip,
       pluck: {
@@ -50,9 +47,11 @@ export default (counter) => {
     })
       .then(rows => {
         forEach(rows, row => {
-          record = [];
+          const record = [];
 
           forEach(fields, field => {
+            let input;
+
             if (row[field]) {
               input = typeof row[field] === 'object'
                 ? row[field].name
@@ -70,8 +69,8 @@ export default (counter) => {
         });
 
         return rows.length;
-      });
-  };
+      })
+  );
 
   async function main(i) {
     await findMore(10000, i);

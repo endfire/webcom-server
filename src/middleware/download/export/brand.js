@@ -41,31 +41,29 @@ export default (brandId, counter) => {
 
   config.cols = fields.map(field => ({
     caption: field,
-    type: 'general',
+    type: 'string',
   }));
 
-  const findMore = () => {
-    let record;
-    let input;
-
-    return query(brandId, counter, redink().conn())
+  const findMore = () => (
+    query(brandId, counter, redink().conn())
       .then(rows => {
         forEach(rows, row => {
-          record = [];
+          const record = [];
 
           forEach(fields, field => {
+            let input;
             if (field === 'brand') {
               input = row[field];
-              record.push(input);
+              record.push(`${input}`);
             } else if (field === 'companyId') {
               input = row.company ? row.company.id : 'N/A';
-              record.push(input);
+              record.push(`${input}`);
             } else if (field === 'categories') {
               input = row.categories
                 ? row.categories.map(cat => cat.name).join(', ')
                 : 'No categories';
 
-              record.push(input);
+              record.push(`${input}`);
             } else record.push('');
           });
 
@@ -73,8 +71,8 @@ export default (brandId, counter) => {
         });
 
         return rows.length;
-      });
-  };
+      })
+  );
 
   async function main() {
     await findMore();

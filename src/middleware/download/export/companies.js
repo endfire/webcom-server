@@ -41,14 +41,11 @@ export default (counter) => {
 
   config.cols = fields.map(field => ({
     caption: field,
-    type: 'general',
+    type: 'string',
   }));
 
-  const findMore = (limit, skip) => {
-    let record;
-    let input;
-
-    return find('company', {}, {
+  const findMore = (limit, skip) => (
+    find('company', {}, {
       limit,
       skip,
       without: {
@@ -59,12 +56,12 @@ export default (counter) => {
     })
       .then(rows => {
         forEach(rows, row => {
-          record = [];
+          const record = [];
 
           forEach(fields, field => {
             if (row[field]) {
-              input = row[field];
-              record.push(input);
+              const input = row[field];
+              record.push(`${input}`);
             } else record.push('');
           });
 
@@ -72,11 +69,11 @@ export default (counter) => {
         });
 
         return rows.length;
-      });
-  };
+      })
+  );
 
   async function main(i) {
-    await findMore(10000, i);
+    await findMore(100, i);
 
     const exportFile = excel.execute(config);
     return Promise.resolve(new Buffer(exportFile, 'binary'));
