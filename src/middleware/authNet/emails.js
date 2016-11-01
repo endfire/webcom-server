@@ -40,13 +40,17 @@ export default (transactionID, info) => {
       attachment: [],
     };
 
+    const transactionIDMessage = transactionID === 'Bill me later'
+      ? 'You selected the \'Bill me Later\' option.'
+      : `Your transaction ID is '${transactionID}'.`;
+
     html = `<html>
       <p>
         ${payment.firstName} ${payment.lastName},
       </p>
       <p>
         Thank you for your payment.
-        Your transaction ID is '${transactionID}'.
+        ${transactionIDMessage}
       </p>
       <p>
         If you have any questions about your purchase,
