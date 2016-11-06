@@ -17,8 +17,8 @@ const query = (brandId, skip, conn) => (
         .pluck({ id: true }),
     }))
     .pluck({ categories: true, company: true, brand: true, brandId: true })
-    .limit(1000)
     .skip(skip)
+    .limit(1000)
     .coerceTo('array')
     .run(conn)
 );
@@ -44,8 +44,8 @@ export default (brandId, counter) => {
     type: 'string',
   }));
 
-  const findMore = () => (
-    query(brandId, counter, redink().conn())
+  const findMore = (id, count) => (
+    query(id, count, redink().conn())
       .then(rows => {
         forEach(rows, row => {
           const record = [];
@@ -74,12 +74,12 @@ export default (brandId, counter) => {
       })
   );
 
-  async function main() {
-    await findMore();
+  async function main(id, count) {
+    await findMore(id, count);
 
     const exportFile = excel.execute(config);
     return Promise.resolve(new Buffer(exportFile, 'binary'));
   }
 
-  return main();
+  return main(brandId, counter);
 };
