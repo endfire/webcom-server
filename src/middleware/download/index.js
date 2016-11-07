@@ -14,7 +14,7 @@ export default (ctx, next) => {
 
   response.set({
     'Content-Type': 'application/vnd.openxmlformats',
-    'Content-Disposition': `attachment; filename=${downloadTable}_${counter}.xlsx`,
+    'Content-Disposition': `attachment; filename=${downloadTable}_${counter || 0}.xlsx`,
   });
 
   switch (downloadTable) {
