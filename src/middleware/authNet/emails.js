@@ -14,6 +14,7 @@ export default (transactionID, info) => {
   const fieldArray = [];
   let message;
   let html;
+  let fieldEmail = undefined;
 
   forEach(items || [], (item) => {
     if (item.quantity > 0) {
@@ -23,8 +24,31 @@ export default (transactionID, info) => {
     }
   });
 
-  forEach(fields || [], (field) => {
+  const sortedFields = [];
+
+  if (fields) {
+    forEach(fields || [], (field) => {
+      sortedFields.push(field);
+    });
+
+    if (sortedFields.length > 0) {
+      sortedFields.sort((a, b) => {
+        if (a.priority > b.priority) {
+          return 1;
+        }
+        if (a.priority < b.priority) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      });
+    }
+  }
+
+  forEach(sortedFields || [], (field) => {
     fieldArray.push(`${field.label}: ${field.value}<br />`);
+
+    if (field.label === 'email' || field.label === 'Email') fieldEmail = field.value;
   });
 
   // Payment Receipt
@@ -88,10 +112,14 @@ export default (transactionID, info) => {
     });
   } else {
     // Non-payment Receipt
+    const toRecipient = fieldEmail
+      ? `Webcom Customer <${fieldEmail}>`
+      : 'Webcom Communications <infowebcomcommunications@gmail.com>';
+
     message	= {
       text:	'Thank you for your submission.',
       from:	'Webcom Communications <infowebcomcommunications@gmail.com>',
-      to:	'Webcom Communications <infowebcomcommunications@gmail.com>',
+      to:	toRecipient,
       cc: `Recipient One <${info.recipientOne}>,
            Recipient Two <${info.recipientTwo}>,
            Recipient Three <${info.recipientThree}>`,
