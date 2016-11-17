@@ -12,9 +12,6 @@ const query = (brandId, skip, conn) => (
           .get(cat('id'))
           .pluck({ name: true })
       )),
-      company: r.table('company')
-        .get(row('company')('id'))
-        .pluck({ id: true }),
     }))
     .pluck({ categories: true, company: true, brand: true, brandId: true })
     .skip(skip)
